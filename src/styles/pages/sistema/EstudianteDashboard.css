@@ -1,0 +1,266 @@
+/* ==========================================
+   ESTILOS GENERALES DEL DASHBOARD ESTUDIANTE
+========================================== */
+.estudiante-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #cbd5e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.estudiante-card {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 85vh;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================
+   PANEL DECORATIVO IZQUIERDO (IMAGEN Y CITA)
+========================================== */
+.estudiante-deco-panel {
+  flex: 0 0 380px;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)),
+              url('https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+  color: #ffffff;
+  padding: 3rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.brand-header h1 {
+  font-family: 'Georgia', serif;
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.brand-header h2 {
+  font-family: 'Georgia', serif;
+  font-size: 2.1rem;
+  color: #facc15; /* Amarillo dorado */
+  margin: 0 0 8px 0;
+}
+
+.sub-tag {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+}
+
+.quote-box {
+  border-left: 3px solid #facc15;
+  padding-left: 1rem;
+  margin-top: 2rem;
+}
+
+.quote-text {
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.quote-author {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #facc15;
+}
+
+/* ==========================================
+   PANEL DE CONTENIDO DERECHO
+========================================== */
+.estudiante-content-panel {
+  flex: 1;
+  padding: 2.5rem 3rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.top-nav {
+  margin-bottom: 1rem;
+}
+
+.back-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #475569;
+}
+
+/* Usuario y Salir */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.u-fullname {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.u-badge {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+/* Módulo y Profesor */
+.module-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.module-code {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0d9488;
+  letter-spacing: 1px;
+}
+
+.teacher-name {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.greeting-title {
+  font-family: 'Georgia', serif;
+  font-size: 2.4rem;
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.greeting-title span {
+  color: #2563eb;
+}
+
+/* ==========================================
+   TARJETAS DE CORTES Y NOTAS
+========================================== */
+.cortes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.corte-card {
+  display: flex;
+  align-items: center;
+  background: #fdfdfd;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.corte-badge {
+  width: 110px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.corte-badge .dot {
+  font-size: 1.2rem;
+  line-height: 0.5;
+  margin-bottom: 4px;
+}
+
+/* Colores de badges */
+.badge-corte1 { background-color: #1e40af; }
+.badge-corte2 { background-color: #0d9488; }
+.badge-corte3 { background-color: #1e3a8a; }
+.badge-final  { background-color: #eab308; color: #1e293b; }
+
+.corte-nota {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  padding: 0 1.5rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.corte-obs {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border-left: 1px solid #f1f5f9;
+}
+
+.obs-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.corte-obs p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+/* Tarjeta Final Aprobado / Reprobado */
+.final-card.aprobado {
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+}
+
+.final-card.aprobado .estado-texto {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.final-card.reprobado .estado-texto {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+  .estudiante-card {
+    flex-direction: column;
+  }
+  .estudiante-deco-panel {
+    flex: 0 0 auto;
+    min-height: 220px;
+  }
+  .estudiante-content-panel {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,133 @@
+/*======================================
+            BOTONES
+======================================*/
+
+.btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    font-weight:600;
+
+    font-size:15px;
+
+    text-decoration:none;
+
+}
+
+/*==========================
+      PRIMARIO
+==========================*/
+
+.btn-primary{
+
+    background:var(--color-primary);
+
+    color:white;
+
+    height:54px;
+
+    padding:0 22px;
+
+}
+
+.btn-primary:hover{
+
+    background:#1f2f77;
+
+    transform:translateY(-2px);
+
+}
+
+/*==========================
+      SECUNDARIO
+==========================*/
+
+.btn-secondary{
+
+    background:var(--gray-100);
+
+    color:var(--color-primary);
+
+    height:54px;
+
+    padding:0 22px;
+
+}
+
+.btn-secondary:hover{
+
+    background:var(--gray-200);
+
+}
+
+/*==========================
+      PELIGRO
+==========================*/
+
+.btn-danger{
+
+    background:#d32f2f;
+
+    color:white;
+
+}
+
+.btn-danger:hover{
+
+    background:#b71c1c;
+
+}
+
+/*==========================
+      LINK
+==========================*/
+
+.btn-link{
+
+    border:none;
+
+    background:none;
+
+    color:var(--color-primary);
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    padding:0;
+
+}
+
+.btn-link:hover{
+
+    text-decoration:underline;
+
+}
+
+/*==========================
+      DESHABILITADO
+==========================*/
+
+.btn:disabled{
+
+    opacity:.65;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+}

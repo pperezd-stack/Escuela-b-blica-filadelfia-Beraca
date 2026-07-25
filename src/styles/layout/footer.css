@@ -1,0 +1,58 @@
+.footer {
+    background: transparent; /* O var(--color-primary) si prefieres fondo azul */
+    color: #333;
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-container {
+    width: min(1200px, 95%);
+    margin: 0 auto;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Agrupa las secciones (Plataforma, Información, Contacto) en 3 columnas */
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    text-align: left; /* Alinea el texto internamente a la izquierda */
+}
+
+.footer-section {
+    flex: 1;
+}
+
+.footer-section h3, 
+.footer-section h4 {
+    font-size: 1.05rem;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.footer-section p {
+    font-size: 0.88rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* Copyright centrado al final */
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #D0D7DE;
+    padding-top: 15px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Responsivo para celulares */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}

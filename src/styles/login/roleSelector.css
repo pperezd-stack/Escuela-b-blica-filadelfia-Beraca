@@ -1,0 +1,77 @@
+.role-selector{
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1rem;
+    margin-bottom:2rem;
+
+}
+
+.role-card{
+
+    border:2px solid var(--gray-200);
+    border-radius:14px;
+
+    background:var(--white);
+
+    padding:1.4rem;
+
+    cursor:pointer;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    transition:.25s;
+
+}
+
+.role-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:var(--color-primary);
+
+}
+
+.role-card.active{
+
+    background:var(--color-primary);
+
+    color:white;
+
+    border-color:var(--color-primary);
+
+}
+
+.role-icon{
+
+    font-size:2rem;
+
+    margin-bottom:.7rem;
+
+}
+
+.role-card h4{
+
+    margin:.3rem 0;
+
+}
+
+.role-card p{
+
+    opacity:.8;
+
+    font-size:.9rem;
+
+}
+
+@media(max-width:768px){
+
+    .role-selector{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

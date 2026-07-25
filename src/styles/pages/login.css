@@ -1,0 +1,309 @@
+:root {
+  --gold: #fff;
+  --gold-light: #dcdc32;
+  --dark: #293f98;
+  --accent: #70b0e9;
+  --teal: #00A3B1;
+  --teal-dark: #00788a;
+  --teal-light: #e0f7fa;
+}
+
+/* ==========================================
+   ESTRUCTURA GENERAL Y LAYOUT PRINCIPAL
+========================================== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background: #edf2f8;
+}
+
+.login-card {
+  width: min(1200px, 100%);
+  min-height: 760px;
+  display: grid;
+  grid-template-columns: 55% 45%; /* 55% para el formulario, 45% para el carrusel */
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
+}
+
+/* ==========================================
+   PANEL IZQUIERDO: FORMULARIO
+========================================== */
+.form-panel {
+  padding: 55px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto; /* Permite scroll si el registro es muy largo */
+}
+
+/* ==========================================
+   PANEL DERECHO: BANNER / CARRUSEL
+   (Evita que la imagen se monte sobre el form)
+========================================== */
+.login-banner {
+  min-height: 100%;
+  width: 100%;
+  overflow: hidden; /* Controla el desborde */
+  position: relative;
+  background-color: #0f172a;
+}
+
+/* Forzar restricción de imágenes y elementos internos del carrusel */
+.login-banner img,
+.login-banner .carousel,
+.login-banner .carousel-item,
+.login-banner .slick-slider,
+.login-banner .slick-list,
+.login-banner .slick-track {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+/* ==========================================
+   SELECTOR DE ROL (PESTAÑAS)
+========================================== */
+.role-selector-container {
+  display: flex;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  gap: 6px;
+}
+
+.role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.role-tab-icon {
+  font-size: 1.1rem;
+}
+
+.role-tab:hover {
+  color: #1e293b;
+}
+
+.role-tab.active {
+  background-color: #ffffff;
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================
+   ENCABEZADOS DE FORMULARIO
+========================================== */
+.login-form-heading {
+  margin-bottom: 30px;
+}
+
+.login-form-heading span {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.login-form-heading h2 {
+  margin-top: 8px;
+  font-size: 2.2rem;
+  color: var(--dark);
+  line-height: 1.2;
+}
+
+.login-form-heading strong {
+  color: var(--gold-light);
+}
+
+/* ==========================================
+   CAMPOS DEL FORMULARIO Y REGISTRO
+========================================== */
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.login-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-field-group label {
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.95rem;
+}
+
+.login-field-group input,
+.login-field-group select {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border: 1px solid #d5dbe8;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.login-field-group input:focus,
+.login-field-group select:focus {
+  outline: none;
+  border-color: var(--dark);
+  box-shadow: 0 0 0 4px rgba(41, 63, 152, 0.12);
+}
+
+/* Campo de Contraseña */
+.login-password-group {
+  position: relative;
+  width: 100%;
+}
+
+.login-password-group input {
+  width: 100%;
+  padding-right: 55px;
+}
+
+.login-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.login-password-toggle:hover {
+  color: var(--dark);
+}
+
+/* ==========================================
+   BOTONES Y ACCIONES
+========================================== */
+.login-submit-button {
+  width: 100%;
+  height: 54px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  background: var(--dark);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.login-submit-button:hover {
+  background: #20327c;
+}
+
+.login-submit-button:active {
+  transform: scale(0.99);
+}
+
+.login-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-form-footer {
+  margin-top: 25px;
+  text-align: center;
+  color: #666666;
+  font-size: 0.95rem;
+}
+
+.login-link-button {
+  margin-left: 6px;
+  border: none;
+  background: none;
+  color: var(--dark);
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.login-link-button:hover {
+  color: var(--accent);
+}
+
+/* ==========================================
+   ALERTAS
+========================================== */
+.login-alert-error {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #c62828;
+  font-size: 0.95rem;
+  border: 1px solid #f8b4b4;
+}
+
+.login-alert-success {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+/* ==========================================
+   DISEÑO ADAPTATIVO (RESPONSIVE)
+========================================== */
+@media (max-width: 992px) {
+  .login-card {
+    grid-template-columns: 1fr;
+  }
+
+  .login-banner {
+    height: 320px;
+  }
+
+  .form-panel {
+    padding: 35px;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-page {
+    padding: 15px;
+  }
+
+  .form-panel {
+    padding: 25px;
+  }
+}

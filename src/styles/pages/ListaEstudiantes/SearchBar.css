@@ -1,0 +1,97 @@
+.search-section{
+
+    margin-bottom:30px;
+
+}
+
+.search-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
+}
+
+.search-tag{
+
+    color:#00A3B1;
+
+    font-size:11px;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+    font-weight:700;
+
+}
+
+.search-header h2{
+
+    font-family:"Playfair Display",serif;
+
+    font-size:30px;
+
+    color:#293f98;
+
+    margin-top:6px;
+
+}
+
+.search-header h2 em{
+
+    color:#70b0e9;
+
+    font-style:normal;
+
+}
+
+.search-row{
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:center;
+
+}
+
+.search-row input{
+
+    flex:1;
+
+    padding:12px 16px;
+
+    border:1px solid #ddd;
+
+    border-radius:6px;
+
+    outline:none;
+
+    transition:.25s;
+
+    font-size:15px;
+
+}
+
+.search-row input:focus{
+
+    border-color:#00A3B1;
+
+    box-shadow:0 0 0 3px rgba(0,163,177,.15);
+
+}
+
+.student-count{
+
+    color:#888;
+
+    font-size:14px;
+
+    white-space:nowrap;
+
+}

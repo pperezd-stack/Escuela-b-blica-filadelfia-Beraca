@@ -1,0 +1,102 @@
+/*=========================================
+                HEADER
+=========================================*/
+
+.header{
+    width:100%;
+    background:#293F98;
+    color:#fff;
+    padding:18px 40px;
+    box-shadow:0 8px 30px rgba(0,0,0,.12);
+}
+
+.header-container{
+    max-width:1400px;
+    margin:auto;
+}
+
+.header-brand{
+    display:flex;
+    align-items:center;
+    gap:28px;
+}
+
+/*=========================================
+                LOGO
+=========================================*/
+
+.header-logo{
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#fff;
+    padding:8px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    flex-shrink:0;
+}
+
+/*=========================================
+                TITULOS
+=========================================*/
+
+.header-small{
+    display:block;
+    margin-bottom:8px;
+    font-size:15px;
+    letter-spacing:6px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.8);
+}
+
+.header-title h1{
+    margin:0;
+    font-family:"Playfair Display",serif;
+    font-size:3.4rem;
+    font-weight:700;
+    color:#fff;
+    line-height:1.1;
+}
+
+.header-title span{
+    color:#DCDC32;
+}
+
+/*=========================================
+                RESPONSIVE
+=========================================*/
+
+@media(max-width:900px){
+
+    .header{
+        padding:20px;
+    }
+
+    .header-brand{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .header-logo{
+        width:80px;
+        height:80px;
+    }
+
+    .header-title h1{
+        font-size:2.3rem;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .header-title h1{
+        font-size:1.8rem;
+    }
+
+    .header-small{
+        letter-spacing:3px;
+        font-size:12px;
+    }
+
+}

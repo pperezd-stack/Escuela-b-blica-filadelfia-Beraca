@@ -1,0 +1,402 @@
+/* ==========================================
+   CARDS
+   Plataforma Beraca
+========================================== */
+
+/* ========= Card Base ========= */
+
+.card{
+
+    background:var(--white);
+
+    border-radius:18px;
+
+    padding:24px;
+
+    box-shadow:var(--shadow-small);
+
+    transition:all .30s ease;
+
+    border:1px solid var(--gray-200);
+
+}
+
+/* ========= Hover ========= */
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow-large);
+
+}
+
+/* ========= Cabecera ========= */
+
+.card-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.card-title{
+
+    font-size:1.2rem;
+
+    font-weight:700;
+
+    color:var(--color-primary);
+
+}
+
+.card-subtitle{
+
+    color:var(--gray-500);
+
+    font-size:.9rem;
+
+}
+
+/* ========= Contenido ========= */
+
+.card-body{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+/* ========= Footer ========= */
+
+.card-footer{
+
+    margin-top:25px;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+}
+
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+}
+
+.dashboard-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:var(--shadow-small);
+
+    transition:.3s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-large);
+
+}
+
+.dashboard-card h3{
+
+    color:var(--gray-500);
+
+    font-size:1rem;
+
+    margin-bottom:15px;
+
+}
+
+.dashboard-card h2{
+
+    color:var(--color-primary);
+
+    font-size:2rem;
+
+}
+
+/* ==========================================
+   STUDENT CARD
+========================================== */
+
+.student-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    border-left:6px solid var(--color-primary);
+
+    box-shadow:var(--shadow-small);
+
+    transition:.30s;
+
+    cursor:pointer;
+
+}
+
+.student-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:var(--shadow-large);
+
+}
+
+.student-avatar{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    background:var(--color-primary);
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:1.7rem;
+
+    font-weight:bold;
+
+    margin-bottom:18px;
+
+}
+
+.student-name{
+
+    font-size:1.1rem;
+
+    font-weight:600;
+
+    color:var(--gray-700);
+
+}
+
+.student-email{
+
+    color:var(--gray-500);
+
+    margin-top:5px;
+
+    font-size:.9rem;
+
+}
+
+.student-module{
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    background:#eef5ff;
+
+    color:var(--color-primary);
+
+    padding:7px 15px;
+
+    border-radius:25px;
+
+    font-size:.85rem;
+
+}
+
+/* ==========================================
+   MODULE CARD
+========================================== */
+
+.module-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:var(--shadow-small);
+
+    border-top:6px solid var(--color-primary);
+
+    transition:.3s;
+
+}
+
+.module-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:var(--shadow-large);
+
+}
+
+.module-title{
+
+    font-size:1.25rem;
+
+    color:var(--color-primary);
+
+    margin-bottom:12px;
+
+}
+
+.module-info{
+
+    color:var(--gray-600);
+
+    margin-bottom:8px;
+
+}
+
+/* ==========================================
+   GRADE CARD
+========================================== */
+
+.grade-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:var(--shadow-small);
+
+}
+
+.grade-value{
+
+    font-size:2.2rem;
+
+    color:var(--color-success);
+
+    font-weight:bold;
+
+}
+
+.grade-label{
+
+    color:var(--gray-500);
+
+}
+
+/* ==========================================
+   OBSERVATION CARD
+========================================== */
+
+.observation-card{
+
+    background:#fffdf7;
+
+    border-left:5px solid #ffc107;
+
+    border-radius:15px;
+
+    padding:18px;
+
+    box-shadow:var(--shadow-small);
+
+}
+
+.observation-card p{
+
+    margin-top:10px;
+
+    color:var(--gray-600);
+
+}
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.empty-card{
+
+    padding:60px;
+
+    text-align:center;
+
+    background:white;
+
+    border-radius:20px;
+
+    box-shadow:var(--shadow-small);
+
+}
+
+.empty-card h2{
+
+    color:var(--gray-500);
+
+}
+
+.empty-card p{
+
+    margin-top:15px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+    .dashboard-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .card{
+
+        padding:18px;
+
+    }
+
+    .student-avatar{
+
+        width:60px;
+
+        height:60px;
+
+        font-size:1.4rem;
+
+    }
+
+}

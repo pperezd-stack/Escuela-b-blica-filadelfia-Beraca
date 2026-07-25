@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { registrarProfesor } from "../../services/usuarioService";
-// Si MODULOS es una lista de objetos [{ id: 1, nombre: 'Escuela Bíblica 1' }], lo dejamos.
-import MODULOS from "../../data/modulos"; 
 
 export default function RegistroProfesor({ volver }) {
     const navigate = useNavigate();
@@ -15,12 +14,22 @@ export default function RegistroProfesor({ volver }) {
     const [confirmar, setConfirmar] = useState("");
     const [moduloId, setModuloId] = useState(""); // 🟢 Ahora manejamos el ID
 
+    // 🟢 Módulos cargados dinámicamente desde el backend
+    const [modulos, setModulos] = useState([]);
+
     const [loading, setLoading] = useState(false);
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
 
     const [mostrarPassword, setMostrarPassword] = useState(false);
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
+    // 🟢 Cargar los módulos reales desde el backend al montar el componente
+    useEffect(() => {
+        axios.get("https://escuela-beraca-1.onrender.com/modulos")
+            .then((res) => setModulos(res.data))
+            .catch((err) => console.error("Error al cargar módulos:", err));
+    }, []);
 
     const registrar = async (e) => {
         e.preventDefault();
@@ -148,10 +157,9 @@ export default function RegistroProfesor({ volver }) {
                         required
                     >
                         <option value="">Seleccione un módulo</option>
-                        {/* ⚠️ Si MODULOS son objetos con ID (ej: {id: 1, nombre: 'Módulo 1'}) */}
-                        {MODULOS.map((item) => (
-                            <option key={item.id || item} value={item.id || item}>
-                                {item.nombre || item}
+                        {modulos.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.nombre}
                             </option>
                         ))}
                     </select>

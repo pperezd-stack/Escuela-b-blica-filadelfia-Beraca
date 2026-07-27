@@ -1,237 +1,253 @@
 import React from 'react';
 
-const HistorialModal = ({
-    visible,
-    estudiante,
-    datos,
-    setDatos,
-    modulos,
-    onCerrar,
-    onGuardar
-}) => {
+export default function HistorialModal({
+  open,
+  onClose,
+  estudiante,
+  modulos,
+  moduloSelect,
+  setModuloSelect,
+  matriculaSeleccionada,
+  guardandoMatricula,
+  actualizarMatricula,
+  eliminarMatricula,
+  corte1,
+  setCorte1,
+  corte2,
+  setCorte2,
+  corte3,
+  setCorte3,
+  notaFinal,
+  obsCorte1,
+  setObsCorte1,
+  obsCorte2,
+  setObsCorte2,
+  obsCorte3,
+  setObsCorte3,
+  obsFinal,
+  setObsFinal,
+  guardarHistorial,
+  guardandoHistorial,
+  moduloActual
+}) {
+  if (!open || !estudiante) return null;
 
-    if (!visible || !estudiante) return null;
+  const numNotaFinal = parseFloat(notaFinal) || 0;
+  const claseNotaFinal = numNotaFinal >= 3.0 ? "aprobado" : "reprobado";
 
-    const actualizar = (campo, valor) => {
-        setDatos({
-            ...datos,
-            [campo]: valor
-        });
-    };
+  return (
+    <div className="perfil-overlay" onClick={onClose}>
+      <div className="perfil-modal" onClick={(e) => e.stopPropagation()}>
+        {/* BOTÓN CERRAR */}
+        <button className="close-modal" onClick={onClose}>
+          &times;
+        </button>
 
-    return (
-        <div
-            className="perfil-overlay open"
-            onClick={onCerrar}
-        >
-            <div
-                className="perfil-modal"
-                onClick={(e) => e.stopPropagation()}
+        {/* PANEL IZQUIERDO DEL MODAL */}
+        <div className="perfil-left">
+          <div className="big-avatar">
+            <i className="bi bi-person-fill"></i>
+          </div>
+          <h2>{estudiante.nombre}</h2>
+          <span className="student-id">ID: #{estudiante.id}</span>
+          
+          <div style={{ marginTop: '2rem', width: '100%', textAlign: 'left' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '6px', opacity: 0.9 }}>
+              Módulo Asignado:
+            </label>
+            <select
+              value={moduloSelect}
+              onChange={(e) => setModuloSelect(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px 10px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: 'rgba(0,0,0,0.2)',
+                color: '#ffffff',
+                fontSize: '0.9rem',
+                outline: 'none',
+                marginBottom: '10px'
+              }}
             >
-                {/* PANEL IZQUIERDO */}
-                <div className="perfil-left">
-                    <div className="big-avatar">
-                        👤
-                    </div>
+              <option value="" disabled style={{ color: '#000' }}>Seleccione módulo</option>
+              {modulos.map((m) => (
+                <option key={m.id} value={m.id} style={{ color: '#000' }}>
+                  {m.nombre}
+                </option>
+              ))}
+            </select>
 
-                    <h3>
-                        {estudiante.nombre}
-                    </h3>
-
-                    <div className="p-code">
-                        Código: {estudiante.codigo}
-                    </div>
-
-                    <div className="p-modulo">
-                        <span>
-                            Asignar módulo
-                        </span>
-
-                        <select
-                            value={datos.modulo}
-                            onChange={(e) =>
-                                actualizar(
-                                    "modulo",
-                                    e.target.value
-                                )
-                            }
-                        >
-                            {
-                                modulos.map((m) => (
-                                    <option
-                                        key={m}
-                                        value={m}
-                                    >
-                                        {m}
-                                    </option>
-                                ))
-                            }
-                        </select>
-                    </div>
-                </div>
-
-                {/* PANEL DERECHO */}
-                <div className="perfil-right">
-                    <button
-                        className="close-btn"
-                        onClick={onCerrar}
-                    >
-                        ✕
-                    </button>
-
-                    <h4>
-                        Calificaciones del
-                        <span>
-                            {" "}Módulo
-                        </span>
-                    </h4>
-
-                    <table className="notas-mini">
-                        <thead>
-                            <tr>
-                                <th>Corte 1</th>
-                                <th>Corte 2</th>
-                                <th>Corte 3</th>
-                                <th>Final</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input
-                                        className="input-nota"
-                                        value={datos.corte1}
-                                        onChange={(e)=>
-                                            actualizar(
-                                                "corte1",
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        className="input-nota"
-                                        value={datos.corte2}
-                                        onChange={(e)=>
-                                            actualizar(
-                                                "corte2",
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        className="input-nota"
-                                        value={datos.corte3}
-                                        onChange={(e)=>
-                                            actualizar(
-                                                "corte3",
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        className="input-nota"
-                                        value={datos.notaFinal}
-                                        readOnly
-                                    />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div className="obs-section">
-                        <h4 className="obs-section-title">
-                            Observaciones
-                            <span>
-                                {" "}por corte y final
-                            </span>
-                        </h4>
-
-                        {/* CORTE 1 */}
-                        <div className="obs-corte-block">
-                            <div className="obs-corte-label">
-                                Corte 1
-                            </div>
-                            <textarea
-                                className="obs-textarea"
-                                value={datos.comentario1}
-                                onChange={(e)=>
-                                    actualizar(
-                                        "comentario1",
-                                        e.target.value
-                                    )
-                                }
-                            />
-                        </div>
-
-                        {/* CORTE 2 */}
-                        <div className="obs-corte-block">
-                            <div className="obs-corte-label">
-                                Corte 2
-                            </div>
-                            <textarea
-                                className="obs-textarea"
-                                value={datos.comentario2}
-                                onChange={(e)=>
-                                    actualizar(
-                                        "comentario2",
-                                        e.target.value
-                                    )
-                                }
-                            />
-                        </div>
-
-                        {/* CORTE 3 */}
-                        <div className="obs-corte-block">
-                            <div className="obs-corte-label">
-                                Corte 3
-                            </div>
-                            <textarea
-                                className="obs-textarea"
-                                value={datos.comentario3}
-                                onChange={(e)=>
-                                    actualizar(
-                                        "comentario3",
-                                        e.target.value
-                                    )
-                                }
-                            />
-                        </div>
-
-                        {/* OBSERVACIÓN NOTA FINAL */}
-                        <div className="obs-corte-block">
-                            <div className="obs-corte-label">
-                                Nota Final / Observación General
-                            </div>
-                            <textarea
-                                className="obs-textarea"
-                                value={datos.comentarioFinal}
-                                onChange={(e)=>
-                                    actualizar(
-                                        "comentarioFinal",
-                                        e.target.value
-                                    )
-                                }
-                                placeholder="Escribe un comentario o conclusión sobre la nota final..."
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        className="btn-guardar-cambios"
-                        onClick={onGuardar}
-                    >
-                        Guardar Historial Académico
-                    </button>
-                </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={actualizarMatricula}
+                disabled={guardandoMatricula}
+                style={{
+                  flex: 1,
+                  padding: '6px 10px',
+                  background: '#ffffff',
+                  color: '#0f766e',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {guardandoMatricula ? 'Guardando...' : 'Cambiar'}
+              </button>
+              
+              {matriculaSeleccionada && (
+                <button
+                  type="button"
+                  onClick={eliminarMatricula}
+                  disabled={guardandoMatricula}
+                  style={{
+                    padding: '6px 10px',
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    color: '#f87171',
+                    border: '1px solid #f87171',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer'
+                  }}
+                  title="Quitar estudiante del módulo"
+                >
+                  <i className="bi bi-trash"></i>
+                </button>
+              )}
             </div>
+          </div>
         </div>
-    );
-};
 
-export default HistorialModal;
+        {/* PANEL DERECHO DEL MODAL */}
+        <div className="perfil-right">
+          <h3 className="modal-title">Calificaciones y Observaciones</h3>
+
+          <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem', fontWeight: 600 }}>
+            Módulo actual evaluado: <span style={{ color: '#0d9488' }}>{moduloActual}</span>
+          </div>
+
+          <table className="tabla-notas">
+            <thead>
+              <tr>
+                <th>Corte</th>
+                <th>Nota</th>
+                <th>Observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* CORTE 1 */}
+              <tr>
+                <td><strong>Corte 1</strong></td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    className="input-nota"
+                    value={corte1}
+                    onChange={(e) => setCorte1(e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-obs"
+                    placeholder="Comentario corte 1..."
+                    value={obsCorte1}
+                    onChange={(e) => setObsCorte1(e.target.value)}
+                  />
+                </td>
+              </tr>
+
+              {/* CORTE 2 */}
+              <tr>
+                <td><strong>Corte 2</strong></td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    className="input-nota"
+                    value={corte2}
+                    onChange={(e) => setCorte2(e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-obs"
+                    placeholder="Comentario corte 2..."
+                    value={obsCorte2}
+                    onChange={(e) => setObsCorte2(e.target.value)}
+                  />
+                </td>
+              </tr>
+
+              {/* CORTE 3 */}
+              <tr>
+                <td><strong>Corte 3</strong></td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    className="input-nota"
+                    value={corte3}
+                    onChange={(e) => setCorte3(e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className="input-obs"
+                    placeholder="Comentario corte 3..."
+                    value={obsCorte3}
+                    onChange={(e) => setObsCorte3(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* SECCIÓN NOTA FINAL Y COMENTARIO FINAL */}
+          <div className="seccion-nota-final">
+            <div className="card-nota-final">
+              <span className="lbl-final">Nota Final</span>
+              <span className={`val-final ${claseNotaFinal}`}>{notaFinal}</span>
+            </div>
+
+            <div className="wrapper-obs-final">
+              <label className="lbl-obs-final">Comentario Nota Final</label>
+              <input
+                type="text"
+                className="input-obs"
+                placeholder="Observación general o cierre del módulo..."
+                value={obsFinal}
+                onChange={(e) => setObsFinal(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* BOTONES DE ACCIÓN */}
+          <div className="perfil-actions">
+            <button
+              type="button"
+              className="btn-guardar"
+              onClick={guardarHistorial}
+              disabled={guardandoHistorial}
+            >
+              {guardandoHistorial ? 'Guardando cambios...' : 'Guardar Calificaciones'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

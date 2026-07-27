@@ -112,7 +112,7 @@ export default function ListaEstudiantes() {
   const [obsCorte1, setObsCorte1] = useState("");
   const [obsCorte2, setObsCorte2] = useState("");
   const [obsCorte3, setObsCorte3] = useState("");
-  const [obsFinal, setObsFinal] = useState("");
+  const [obsFinal, setObsFinal] = useState(""); // <--- Estado para el comentario de la nota final
 
   const [calificacionId, setCalificacionId] = useState(null);
   const [observacionId, setObservacionId] = useState(null);
@@ -252,7 +252,7 @@ export default function ListaEstudiantes() {
       setObsCorte1(recordObs.comentario_corte1 || recordObs.comentarioCorte1 || "");
       setObsCorte2(recordObs.comentario_corte2 || recordObs.comentarioCorte2 || "");
       setObsCorte3(recordObs.comentario_corte3 || recordObs.comentarioCorte3 || "");
-      setObsFinal(recordObs.comentario_final || recordObs.comentarioFinal || "");
+      setObsFinal(recordObs.comentario_final || recordObs.comentarioFinal || ""); // <--- Cargando comentario final
     } else {
       setObservacionId(null);
       setObsCorte1("");
@@ -365,8 +365,8 @@ export default function ListaEstudiantes() {
       comentario_corte2: obsCorte2 || "",
       comentarioCorte3: obsCorte3 || "",
       comentario_corte3: obsCorte3 || "",
-      comentarioFinal: obsFinal || "",
-      comentario_final: obsFinal || ""
+      comentarioFinal: obsFinal || "", // <--- Incluido en el payload enviando a la API
+      comentario_final: obsFinal || ""  // <--- Incluido por compatibilidad de nombres de columnas
     };
 
     setGuardandoHistorial(true);
@@ -584,8 +584,8 @@ export default function ListaEstudiantes() {
         setObsCorte2={setObsCorte2}
         obsCorte3={obsCorte3}
         setObsCorte3={setObsCorte3}
-        obsFinal={obsFinal}
-        setObsFinal={setObsFinal}
+        obsFinal={obsFinal}         // <--- Prop pass para el comentario final
+        setObsFinal={setObsFinal}   // <--- Prop pass para actualizar el comentario final
         guardarHistorial={guardarHistorial}
         guardandoHistorial={guardandoHistorial}
         moduloActual={moduloProfesorLabel}

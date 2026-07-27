@@ -1,79 +1,40 @@
 import React, { useEffect, useState } from "react";
 
-const proseforStudentModal = ({
+const ProfesorStudentModal = ({
     estudiante,
-    visible,
+    open,
     modulos,
-    onCerrar,
-    onGuardar
+    onClose,
+    moduloSelect,
+    setModuloSelect,
+    corte1,
+    setCorte1,
+    corte2,
+    setCorte2,
+    corte3,
+    setCorte3,
+    notaFinal,
+    obsCorte1,
+    setObsCorte1,
+    obsCorte2,
+    setObsCorte2,
+    obsCorte3,
+    setObsCorte3,
+    obsFinal,
+    setObsFinal,
+    guardarHistorial,
+    guardandoHistorial
 }) => {
-    const [formulario, setFormulario] = useState({
-        moduloId: "",
-        corte1: "",
-        corte2: "",
-        corte3: "",
-        notaFinal: "",
-        comentarioCorte1: "",
-        comentarioCorte2: "",
-        comentarioCorte3: ""
-    });
+    if (!open || !estudiante) return null;
 
-    useEffect(() => {
-        if (!estudiante) return;
-        setFormulario({
-            moduloId: estudiante.modulo?.id || "",
-            corte1: estudiante.calificacion?.corte1 || "",
-            corte2: estudiante.calificacion?.corte2 || "",
-            corte3: estudiante.calificacion?.corte3 || "",
-            notaFinal: estudiante.calificacion?.notaFinal || "",
-            comentarioCorte1: estudiante.observacion?.comentarioCorte1 || "",
-            comentarioCorte2: estudiante.observacion?.comentarioCorte2 || "",
-            comentarioCorte3: estudiante.observacion?.comentarioCorte3 || ""
-        });
-    }, [estudiante]);
-
-    useEffect(() => {
-        calcularNotaFinal();
-    }, [
-        formulario.corte1,
-        formulario.corte2,
-        formulario.corte3
-    ]);
-
-    const cambiarValor = (e) => {
-        setFormulario({
-            ...formulario,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const calcularNotaFinal = () => {
-        const c1 = parseFloat(formulario.corte1) || 0;
-        const c2 = parseFloat(formulario.corte2) || 0;
-        const c3 = parseFloat(formulario.corte3) || 0;
-
-        const promedio = ((c1 + c2 + c3) / 3).toFixed(2);
-
-        setFormulario(prev => ({
-            ...prev,
-            notaFinal: promedio
-        }));
-    };
-
-    const guardar = () => {
-        onGuardar(estudiante.id, formulario);
-    };
-
-    if (!visible || !estudiante) return null;
-
-    const numNotaFinal = parseFloat(formulario.notaFinal) || 0;
+    const numNotaFinal = parseFloat(notaFinal) || 0;
     const claseNotaFinal = numNotaFinal >= 3.0 ? "aprobado" : "reprobado";
 
     return (
-        <div className="perfil-overlay" onClick={onCerrar}>
+        <div className="perfil-overlay" onClick={onClose}>
             <div className="perfil-modal" onClick={(e) => e.stopPropagation()}>
                 {/* BOTÓN CERRAR */}
-                <button className="close-modal" onClick={onCerrar}>
+                <button className="close-modal" onClick={onClose}>
                     &times;
                 </button>
 
@@ -91,9 +52,8 @@ const proseforStudentModal = ({
                         </label>
                         <select
                             className="form-select"
-                            name="moduloId"
-                            value={formulario.moduloId}
-                            onChange={cambiarValor}
+                            value={moduloSelect}
+                            onChange={(e) => setModuloSelect(e.target.value)}
                             style={{
                                 width: '100%',
                                 padding: '8px 10px',
@@ -144,9 +104,8 @@ const proseforStudentModal = ({
                                         min="0"
                                         max="5"
                                         className="input-nota"
-                                        name="corte1"
-                                        value={formulario.corte1}
-                                        onChange={cambiarValor}
+                                        value={corte1}
+                                        onChange={(e) => setCorte1(e.target.value)}
                                     />
                                 </td>
                                 <td>
@@ -154,9 +113,8 @@ const proseforStudentModal = ({
                                         type="text"
                                         className="input-obs"
                                         placeholder="Comentario corte 1..."
-                                        name="comentarioCorte1"
-                                        value={formulario.comentarioCorte1}
-                                        onChange={cambiarValor}
+                                        value={obsCorte1}
+                                        onChange={(e) => setObsCorte1(e.target.value)}
                                     />
                                 </td>
                             </tr>
@@ -171,9 +129,8 @@ const proseforStudentModal = ({
                                         min="0"
                                         max="5"
                                         className="input-nota"
-                                        name="corte2"
-                                        value={formulario.corte2}
-                                        onChange={cambiarValor}
+                                        value={corte2}
+                                        onChange={(e) => setCorte2(e.target.value)}
                                     />
                                 </td>
                                 <td>
@@ -181,9 +138,8 @@ const proseforStudentModal = ({
                                         type="text"
                                         className="input-obs"
                                         placeholder="Comentario corte 2..."
-                                        name="comentarioCorte2"
-                                        value={formulario.comentarioCorte2}
-                                        onChange={cambiarValor}
+                                        value={obsCorte2}
+                                        onChange={(e) => setObsCorte2(e.target.value)}
                                     />
                                 </td>
                             </tr>
@@ -198,9 +154,8 @@ const proseforStudentModal = ({
                                         min="0"
                                         max="5"
                                         className="input-nota"
-                                        name="corte3"
-                                        value={formulario.corte3}
-                                        onChange={cambiarValor}
+                                        value={corte3}
+                                        onChange={(e) => setCorte3(e.target.value)}
                                     />
                                 </td>
                                 <td>
@@ -208,9 +163,8 @@ const proseforStudentModal = ({
                                         type="text"
                                         className="input-obs"
                                         placeholder="Comentario corte 3..."
-                                        name="comentarioCorte3"
-                                        value={formulario.comentarioCorte3}
-                                        onChange={cambiarValor}
+                                        value={obsCorte3}
+                                        onChange={(e) => setObsCorte3(e.target.value)}
                                     />
                                 </td>
                             </tr>
@@ -222,7 +176,7 @@ const proseforStudentModal = ({
                         <div className="card-nota-final">
                             <span className="lbl-final">Nota Final</span>
                             <span className={`val-final ${claseNotaFinal}`}>
-                                {formulario.notaFinal || "0.0"}
+                                {notaFinal || "0.0"}
                             </span>
                         </div>
                     </div>
@@ -232,7 +186,7 @@ const proseforStudentModal = ({
                         <button
                             type="button"
                             className="btn btn-secondary"
-                            onClick={onCerrar}
+                            onClick={onClose}
                             style={{
                                 padding: '10px 20px',
                                 borderRadius: '10px',
@@ -248,9 +202,10 @@ const proseforStudentModal = ({
                         <button
                             type="button"
                             className="btn-guardar"
-                            onClick={guardar}
+                            onClick={guardarHistorial}
+                            disabled={guardandoHistorial}
                         >
-                            Guardar
+                            {guardandoHistorial ? "Guardando..." : "Guardar"}
                         </button>
                     </div>
                 </div>
@@ -259,4 +214,4 @@ const proseforStudentModal = ({
     );
 };
 
-export default proseforStudentModal;
+export default ProfesorStudentModal;

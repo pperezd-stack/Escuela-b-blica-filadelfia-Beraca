@@ -45,7 +45,6 @@ export default function ListaEstudiantes() {
       }
     }
 
-    // Si el usuario actual es profesor, actualizamos el localStorage incondicionalmente
     if (userObj && String(userObj.rol || localStorage.getItem("rol") || "").toUpperCase() === "PROFESOR") {
       const idModulo = userObj.moduloId ?? userObj.modulo_id ?? userObj.idModulo;
       if (idModulo) {
@@ -119,7 +118,6 @@ export default function ListaEstudiantes() {
   const [observacionId, setObservacionId] = useState(null);
 
   useEffect(() => {
-    console.log("🔍 Datos de sesión cargados:", { posibleId, posibleNombre, userObj });
     fetchInicial();
   }, []);
 
@@ -166,7 +164,7 @@ export default function ListaEstudiantes() {
         resModulos,
         resMatriculas,
       ] = await Promise.all([
-        fetch(`${API_URL}/usuarios?rol=${rolLocal}`, { headers }),
+        fetch(`${API_URL}/usuarios?rol=ESTUDIANTE`, { headers }),
         fetch(`${API_URL}/calificaciones?rol=${rolLocal}`, { headers }),
         fetch(`${API_URL}/observaciones?rol=${rolLocal}`, { headers }),
         fetch(`${API_URL}/modulos?rol=${rolLocal}`, { headers }),
@@ -178,8 +176,6 @@ export default function ListaEstudiantes() {
       const dataObs = await parseResponseSafe(resObs);
       const dataModulos = await parseResponseSafe(resModulos);
       const dataMatriculas = await parseResponseSafe(resMatriculas);
-
-      console.log("📦 Modulos traídos de la BD:", dataModulos);
 
       if (Array.isArray(dataUsers)) setUsuarios(dataUsers);
       if (Array.isArray(dataCal)) setCalificaciones(dataCal);
@@ -200,7 +196,7 @@ export default function ListaEstudiantes() {
 
   const getCalificacionEstudiante = (estudianteId) => {
     return calificaciones.find((c) => {
-      const mismoEstudiante = c.estudiante_id === estudianteId || c.estudianteId === estudianteId;
+      const mismoEstudiante = Number(c.estudiante_id ?? c.estudianteId) === Number(estudianteId);
       const mismoModulo = 
         (moduloProfesorId && Number(c.modulo_id ?? c.moduloId) === Number(moduloProfesorId)) ||
         (moduloProfesorNombre && String(c.modulo || c.nombreModulo).toLowerCase() === moduloProfesorNombre.toLowerCase());
@@ -210,47 +206,23 @@ export default function ListaEstudiantes() {
   };
 
   /* ==========================
-     FILTRO DE ESTUDIANTES
-  ========================== */
-  const estaMatriculadoEnModuloProfesor = (estudianteId) => {
-    if (!moduloProfesorId && !moduloProfesorNombre) return true;
-
-    return matriculas.some((mat) => {
-      const idEst = mat.estudiante_id ?? mat.estudianteId;
-      if (idEst !== estudianteId) return false;
-
-      const idMod = mat.modulo_id ?? mat.moduloId;
-      const nomMod = mat.modulo ?? mat.nombreModulo ?? mat.modulo_nombre;
-
-      const coincideId = moduloProfesorId && Number(idMod) === Number(moduloProfesorId);
-      const coincideNombre = 
-        moduloProfesorNombre && 
-        nomMod && 
-        String(nomMod).trim().toLowerCase() === String(moduloProfesorNombre).trim().toLowerCase();
-
-      return coincideId || coincideNombre;
-    });
-  };
-
-  /* ==========================
-        MODAL FUNCIONES
+     MODAL FUNCIONES
   ========================== */
   const abrirPerfil = (estudiante) => {
     setSelectedEstudiante(estudiante);
 
     const matricula = matriculas.find((mat) => {
       const idEst = mat.estudiante_id ?? mat.estudianteId;
-      return idEst === estudiante.id;
+      return Number(idEst) === Number(estudiante.id);
     });
 
     setMatriculaSeleccionada(matricula || null);
 
     const recordCal = getCalificacionEstudiante(estudiante.id);
     const recordObs = observaciones.find(
-      (o) => o.estudiante_id === estudiante.id || o.estudianteId === estudiante.id
+      (o) => Number(o.estudiante_id ?? o.estudianteId) === Number(estudiante.id)
     );
 
-    // 🔑 Forzamos que el módulo seleccionado coincida con el registro activo
     const idModuloAsignado = 
       recordCal?.modulo_id || 
       recordCal?.moduloId || 
@@ -397,9 +369,6 @@ export default function ListaEstudiantes() {
       comentario_final: obsFinal || ""
     };
 
-    console.log("🚀 Enviando Payload Calificaciones:", payloadCalificaciones);
-    console.log("🚀 Enviando Payload Observaciones:", payloadObservaciones);
-
     setGuardandoHistorial(true);
 
     try {
@@ -434,9 +403,7 @@ export default function ListaEstudiantes() {
       const textObs = await resObs.text();
 
       if (!resCal.ok || !resObs.ok) {
-        console.error("Respuesta Servidor Calificaciones:", textCal);
-        console.error("Respuesta Servidor Observaciones:", textObs);
-        alert(`⚠️ Error 500 del Servidor al guardar:\n${!resCal.ok ? 'Calificaciones: ' + textCal : ''}\n${!resObs.ok ? 'Observaciones: ' + textObs : ''}`);
+        alert(`⚠️ Error del Servidor al guardar:\n${!resCal.ok ? 'Calificaciones: ' + textCal : ''}\n${!resObs.ok ? 'Observaciones: ' + textObs : ''}`);
         return;
       }
 
@@ -451,11 +418,12 @@ export default function ListaEstudiantes() {
     }
   };
 
+  /* ==========================
+     FILTRO DE ESTUDIANTES
+  ========================== */
   const estudiantesFiltrados = usuarios.filter((u) => {
-    const esProfesor = String(u.rol).toLowerCase() === "profesor";
-    if (esProfesor) return false;
-
-    if (!estaMatriculadoEnModuloProfesor(u.id)) return false;
+    const rolUsuario = String(u.rol || "").toLowerCase();
+    if (rolUsuario === "profesor" || rolUsuario === "admin") return false;
 
     const termino = busqueda.toLowerCase().trim();
     if (!termino) return true;
@@ -585,7 +553,7 @@ export default function ListaEstudiantes() {
                 })}
               </div>
             ) : (
-              <p className="no-data">No hay estudiantes registrados o matriculados en este módulo.</p>
+              <p className="no-data">No hay estudiantes registrados en el sistema.</p>
             )}
           </div>
         </div>

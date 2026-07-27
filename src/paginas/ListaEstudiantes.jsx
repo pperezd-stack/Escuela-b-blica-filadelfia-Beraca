@@ -45,6 +45,14 @@ export default function ListaEstudiantes() {
       }
     }
 
+    // Si el usuario actual es profesor, actualizamos el localStorage incondicionalmente
+    if (userObj && String(userObj.rol || localStorage.getItem("rol") || "").toUpperCase() === "PROFESOR") {
+      const idModulo = userObj.moduloId ?? userObj.modulo_id ?? userObj.idModulo;
+      if (idModulo) {
+        localStorage.setItem("moduloId", idModulo.toString());
+      }
+    }
+
     const posibleId = 
       localStorage.getItem("moduloId") || 
       localStorage.getItem("modulo_id") || 

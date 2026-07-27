@@ -13,7 +13,6 @@ const EstudianteDashboard = (props) => {
   });
 
   useEffect(() => {
-    // Si no vienen props directas, leemos la sesión de localStorage
     const usuarioStored = localStorage.getItem("usuario");
 
     if (usuarioStored) {
@@ -25,15 +24,26 @@ const EstudianteDashboard = (props) => {
           ? (usuario.nombre?.nombre || usuario.nombre?.primerNombre || "Estudiante")
           : (usuario.nombre || props.nombre || "Estudiante");
 
+        // Detección robusta de Módulo y Profesor (soporta objetos anidados o strings)
+        const moduloObj = usuario.modulo || usuario.matricula?.modulo;
+        const nombreModulo = 
+          typeof moduloObj === "string" ? moduloObj : 
+          (moduloObj?.nombre || usuario.nombreModulo || usuario.moduloNombre || props.modulo || "MÓDULO DE APRENDIZAJE");
+
+        const profesorObj = moduloObj?.profesor || usuario.profesor || usuario.docente;
+        const nombreProfesor = 
+          typeof profesorObj === "string" ? profesorObj : 
+          (profesorObj?.nombre || usuario.nombreProfesor || props.profesor || "Docente Asignado");
+
         setDatosEstudiante({
           nombre: String(nombreReal),
-          modulo: usuario.modulo || usuario.nombreModulo || props.modulo || "MÓDULO DE APRENDIZAJE",
-          profesor: usuario.profesor || usuario.nombreProfesor || props.profesor || "Docente Asignado",
+          modulo: nombreModulo,
+          profesor: nombreProfesor,
           notas: {
             corte1: usuario.corte1 ?? props.notas?.corte1 ?? 0,
             corte2: usuario.corte2 ?? props.notas?.corte2 ?? 0,
             corte3: usuario.corte3 ?? props.notas?.corte3 ?? 0,
-            final: usuario.final ?? props.notas?.final ?? 0,
+            final: usuario.final ?? usuario.notaFinal ?? props.notas?.final ?? 0,
           },
           comentarios: {
             corte1: usuario.comentario1 ?? usuario.comentarios?.corte1 ?? props.comentarios?.corte1 ?? "",

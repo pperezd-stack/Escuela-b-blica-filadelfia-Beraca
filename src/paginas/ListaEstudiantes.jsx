@@ -121,9 +121,11 @@ export default function ListaEstudiantes() {
     fetchInicial();
   }, []);
 
+  // Vuelve a consultar los datos cuando se logre identificar el ID del módulo del profesor
   useEffect(() => {
     if (moduloProfesorId) {
       setModuloSelect(String(moduloProfesorId));
+      fetchEstudiantesPorModulo(moduloProfesorId);
     }
   }, [moduloProfesorId, modulos]);
 
@@ -157,33 +159,30 @@ export default function ListaEstudiantes() {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
+      // Cargamos catálogos generales (módulos, calificaciones, matrículas, etc.)
       const [
-        resUsers,
         resCal,
         resObs,
         resModulos,
         resMatriculas,
       ] = await Promise.all([
-        fetch(`${API_URL}/usuarios?rol=ESTUDIANTE`, { headers }),
         fetch(`${API_URL}/calificaciones?rol=${rolLocal}`, { headers }),
         fetch(`${API_URL}/observaciones?rol=${rolLocal}`, { headers }),
         fetch(`${API_URL}/modulos?rol=${rolLocal}`, { headers }),
         fetch(`${API_URL}/modulosEstudiante?rol=${rolLocal}`, { headers }),
       ]);
 
-      const dataUsers = await parseResponseSafe(resUsers);
       const dataCal = await parseResponseSafe(resCal);
       const dataObs = await parseResponseSafe(resObs);
       const dataModulos = await parseResponseSafe(resModulos);
       const dataMatriculas = await parseResponseSafe(resMatriculas);
 
-      if (Array.isArray(dataUsers)) setUsuarios(dataUsers);
       if (Array.isArray(dataCal)) setCalificaciones(dataCal);
       if (Array.isArray(dataObs)) setObservaciones(dataObs);
       if (Array.isArray(dataModulos)) setModulos(dataModulos);
       if (Array.isArray(dataMatriculas)) setMatriculas(dataMatriculas);
 
-      if (!resUsers.ok || !resCal.ok || !resObs.ok || !resModulos.ok || !resMatriculas.ok) {
+      if (!resCal.ok || !resObs.ok || !resModulos.ok || !resMatriculas.ok) {
         setErrorCarga("Ocurrió un inconveniente al obtener algunos datos del servidor.");
       } else {
         setErrorCarga(null);
@@ -191,6 +190,32 @@ export default function ListaEstudiantes() {
     } catch (err) {
       console.error("Error en fetchInicial:", err);
       setErrorCarga("No fue posible conectar con el servidor backend.");
+    }
+  };
+
+  // Función específica para traer únicamente los estudiantes del módulo actual del profesor
+  const fetchEstudiantesPorModulo = async (idModulo) => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      // Endpoint filtrado en el backend
+      const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?moduloId=${idModulo}`, { headers });
+      const dataUsers = await parseResponseSafe(resUsers);
+
+      if (resUsers.ok && Array.isArray(dataUsers)) {
+        setUsuarios(dataUsers);
+      } else {
+        // Fallback por si el backend usa el nombre en lugar de ID o no soporta el endpoint anterior aún
+        const resFallback = await fetch(`${API_URL}/usuarios?rol=ESTUDIANTE`, { headers });
+        const dataFallback = await parseResponseSafe(resFallback);
+        if (Array.isArray(dataFallback)) setUsuarios(dataFallback);
+      }
+    } catch (err) {
+      console.error("Error obteniendo estudiantes por módulo:", err);
     }
   };
 
@@ -553,7 +578,7 @@ export default function ListaEstudiantes() {
                 })}
               </div>
             ) : (
-              <p className="no-data">No hay estudiantes registrados en el sistema.</p>
+              <p className="no-data">No hay estudiantes registrados en este módulo.</p>
             )}
           </div>
         </div>

@@ -334,7 +334,7 @@
 }
 
 .close-modal:hover {
-  background: #fee2e2;
+  background: #88f0f0;
   color: #446cef;
 }
 
@@ -442,7 +442,7 @@
 }
 
 .val-final.aprobado { color: #10b981; }
-.val-final.reprobado { color: #ef4444; }
+.val-final.reprobado { color: #4491ef; }
 
 .wrapper-obs-final {
   flex: 1;

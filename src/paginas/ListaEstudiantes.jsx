@@ -193,7 +193,7 @@ export default function ListaEstudiantes() {
     }
   };
 
-  // Función específica para traer únicamente los estudiantes del módulo actual del profesor
+  // Función específica para traer únicamente los estudiantes del módulo actual del profesor (usando ?modulo=)
   const fetchEstudiantesPorModulo = async (idModulo) => {
     try {
       const token = localStorage.getItem("token");
@@ -202,14 +202,12 @@ export default function ListaEstudiantes() {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      // Endpoint filtrado en el backend
-      const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?moduloId=${idModulo}`, { headers });
+      const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?modulo=${idModulo}`, { headers });
       const dataUsers = await parseResponseSafe(resUsers);
 
       if (resUsers.ok && Array.isArray(dataUsers)) {
         setUsuarios(dataUsers);
       } else {
-        // Fallback por si el backend usa el nombre en lugar de ID o no soporta el endpoint anterior aún
         const resFallback = await fetch(`${API_URL}/usuarios?rol=ESTUDIANTE`, { headers });
         const dataFallback = await parseResponseSafe(resFallback);
         if (Array.isArray(dataFallback)) setUsuarios(dataFallback);

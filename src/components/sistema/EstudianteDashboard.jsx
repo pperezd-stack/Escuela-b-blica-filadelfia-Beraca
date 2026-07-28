@@ -9,7 +9,7 @@ const EstudianteDashboard = (props) => {
     modulo: props.modulo || "MÓDULO DE APRENDIZAJE",
     profesor: props.profesor || "Docente Asignado",
     notas: props.notas || { corte1: 0, corte2: 0, corte3: 0, final: 0 },
-    comentarios: props.comentarios || { corte1: "", corte2: "", corte3: "" }
+    comentarios: props.comentarios || { corte1: "", corte2: "", corte3: "", final: "" }
   });
 
   useEffect(() => {
@@ -49,6 +49,7 @@ const EstudianteDashboard = (props) => {
             corte1: usuario.comentario1 ?? usuario.comentarios?.corte1 ?? props.comentarios?.corte1 ?? "",
             corte2: usuario.comentario2 ?? usuario.comentarios?.corte2 ?? props.comentarios?.corte2 ?? "",
             corte3: usuario.comentario3 ?? usuario.comentarios?.corte3 ?? props.comentarios?.corte3 ?? "",
+            final: usuario.comentarioFinal ?? usuario.comentario_final ?? usuario.comentarios?.final ?? props.comentarios?.final ?? ""
           }
         });
       } catch (error) {
@@ -97,7 +98,21 @@ const EstudianteDashboard = (props) => {
               <h3 className="u-fullname">{nombre}</h3>
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
-            <LogoutButton />
+            {/* BOTÓN DE CERRAR SESIÓN CON COLOR Y ESTILO MEJORADO */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <LogoutButton 
+                style={{
+                  backgroundColor: '#0d9488',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer'
+                }}
+              />
+            </div>
           </div>
 
           <div className="module-info-box">
@@ -161,7 +176,7 @@ const EstudianteDashboard = (props) => {
               </div>
             </div>
 
-            {/* NOTA FINAL & ESTADO */}
+            {/* NOTA FINAL & OBSERVACIÓN FINAL */}
             <div className={`corte-card final-card ${esAprobado ? 'aprobado' : 'reprobado'}`}>
               <div className="corte-badge badge-final">
                 <span className="dot">•</span>
@@ -171,10 +186,11 @@ const EstudianteDashboard = (props) => {
                 {notaFinal.toFixed(1)}
               </div>
               <div className="corte-obs">
-                <span className="obs-label">🎗️ ESTADO DEL MÓDULO</span>
-                <p className="estado-texto">
+                <span className="obs-label">🎗️ ESTADO Y OBSERVACIÓN FINAL</span>
+                <p className="estado-texto" style={{ fontWeight: 'bold', marginBottom: '4px' }}>
                   {esAprobado ? "Módulo Aprobado ✨" : "Módulo Reprobado ⚠️"}
                 </p>
+                <p>{comentarios?.final || "Sin observaciones finales."}</p>
               </div>
             </div>
 

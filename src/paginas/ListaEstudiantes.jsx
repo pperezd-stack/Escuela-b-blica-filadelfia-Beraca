@@ -31,51 +31,57 @@ export default function ListaEstudiantes() {
   const [errorCarga, setErrorCarga] = useState(null);
 
   /* ==========================
-     MÓDULO DEL PROFESOR (DETECCIÓN ROBUSTA & LIMPIEZA TOTAL)
+     MÓDULO DEL PROFESOR (LIMPIEZA RADICAL DE DOS PUNTOS)
   ========================== */
   const obtenerModuloProfesor = () => {
+    // Limpiamos preventivamente cualquier rastro viejo en localStorage que tenga ":"
+    const keysToCheck = ["moduloId", "modulo_id", "modulo", "moduloNombre"];
+    keysToCheck.forEach(key => {
+      const val = localStorage.getItem(key);
+      if (val && String(val).includes(":")) {
+        const limpio = String(val).split(":")[0].trim();
+        localStorage.setItem(key, limpio);
+      }
+    });
+
     const usuarioStored = localStorage.getItem("usuario") || localStorage.getItem("user");
     let userObj = null;
 
     if (usuarioStored) {
       try {
         userObj = JSON.parse(usuarioStored);
+        // Si el objeto interno también tiene dos puntos, lo saneamos
+        if (userObj.moduloId && String(userObj.moduloId).includes(":")) {
+          userObj.moduloId = String(userObj.moduloId).split(":")[0].trim();
+        }
       } catch (e) {
-        console.error("Error parseando usuario de localStorage:", e);
+        console.error("Error parseando usuario:", e);
       }
     }
 
-    // Extraer de cualquier fuente posible
     let rawId = 
       localStorage.getItem("moduloId") || 
       localStorage.getItem("modulo_id") || 
       userObj?.moduloId || 
       userObj?.modulo_id || 
-      userObj?.idModulo || 
-      userObj?.modulo?.id;
+      userObj?.idModulo;
 
-    // LIMPIEZA ESTRICTA GENERALIZADA: Si viene cualquier cosa con dos puntos (ej: "10:1"), cortamos y dejamos solo el número
     let posibleId = null;
     if (rawId !== null && rawId !== undefined && rawId !== "") {
       const stringId = String(rawId);
       posibleId = stringId.includes(":") ? stringId.split(":")[0].trim() : stringId.trim();
     }
 
-    if (posibleId && String(userObj?.rol || localStorage.getItem("rol") || "").toUpperCase() === "PROFESOR") {
-      localStorage.setItem("moduloId", posibleId);
-    }
-
     const posibleNombre = 
       localStorage.getItem("modulo") || 
       localStorage.getItem("moduloNombre") || 
       userObj?.moduloNombre ||
-      userObj?.nombreModulo ||
-      (typeof userObj?.modulo === "string" ? userObj.modulo : userObj?.modulo?.nombre);
+      userObj?.nombreModulo;
 
-    return { posibleId, posibleNombre, userObj };
+    return { posibleId, posibleNombre };
   };
 
-  const { posibleId, posibleNombre, userObj } = obtenerModuloProfesor();
+  const { posibleId, posibleNombre } = obtenerModuloProfesor();
 
   const moduloEncontrado = modulos.find((m) => {
     if (posibleId && Number(m.id) === Number(posibleId)) return true;
@@ -126,7 +132,6 @@ export default function ListaEstudiantes() {
     fetchInicial();
   }, []);
 
-  // Vuelve a consultar los datos cuando se logre identificar el ID del módulo del profesor
   useEffect(() => {
     if (moduloProfesorId) {
       setModuloSelect(String(moduloProfesorId));
@@ -197,7 +202,6 @@ export default function ListaEstudiantes() {
     }
   };
 
-  // Función específica para traer únicamente los estudiantes del módulo actual del profesor (Con blindaje estricto)
   const fetchEstudiantesPorModulo = async (idModulo) => {
     try {
       let idLimpio = "";
@@ -207,7 +211,7 @@ export default function ListaEstudiantes() {
       }
 
       if (!idLimpio || isNaN(idLimpio)) {
-        console.warn("ID de módulo inválido interceptado:", idModulo);
+        console.warn("ID de módulo inválido bloqueado:", idModulo);
         return; 
       }
 

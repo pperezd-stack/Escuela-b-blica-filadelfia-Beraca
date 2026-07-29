@@ -34,7 +34,6 @@ export default function ListaEstudiantes() {
      MÓDULO DEL PROFESOR (LIMPIEZA RADICAL DE DOS PUNTOS)
   ========================== */
   const obtenerModuloProfesor = () => {
-    // Limpiamos preventivamente cualquier rastro viejo en localStorage que tenga ":"
     const keysToCheck = ["moduloId", "modulo_id", "modulo", "moduloNombre"];
     keysToCheck.forEach(key => {
       const val = localStorage.getItem(key);
@@ -50,7 +49,6 @@ export default function ListaEstudiantes() {
     if (usuarioStored) {
       try {
         userObj = JSON.parse(usuarioStored);
-        // Si el objeto interno también tiene dos puntos, lo saneamos
         if (userObj.moduloId && String(userObj.moduloId).includes(":")) {
           userObj.moduloId = String(userObj.moduloId).split(":")[0].trim();
         }
@@ -210,8 +208,8 @@ export default function ListaEstudiantes() {
         idLimpio = str.includes(":") ? str.split(":")[0].trim() : str.trim();
       }
 
-      if (!idLimpio || isNaN(idLimpio)) {
-        console.warn("ID de módulo inválido bloqueado:", idModulo);
+      // BLOQUEO ABSOLUTO: Si el ID está vacío, es nulo, o dice "undefined", cancelamos la petición
+      if (!idLimpio || idLimpio === "undefined" || idLimpio === "null" || isNaN(idLimpio)) {
         return; 
       }
 

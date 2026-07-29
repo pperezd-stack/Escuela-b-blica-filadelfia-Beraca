@@ -48,9 +48,12 @@ const Sistema = () => {
             setModulo(usuario.modulo || "");
 
             if (usuario.rol?.toUpperCase() === "PROFESOR") {
-                const idModulo = usuario.moduloId ?? usuario.modulo_id ?? usuario.idModulo;
-                if (idModulo && !localStorage.getItem("moduloId")) {
-                    localStorage.setItem("moduloId", idModulo.toString());
+                const rawModuloId = usuario.moduloId ?? usuario.modulo_id ?? usuario.idModulo;
+                if (rawModuloId) {
+                    const stringId = String(rawModuloId);
+                    // 🧹 BLINDAJE: Cortamos por los dos puntos para guardar solo el número puro (ej. "10:1" -> "10")
+                    const idModuloLimpio = stringId.includes(":") ? stringId.split(":")[0].trim() : stringId.trim();
+                    localStorage.setItem("moduloId", idModuloLimpio);
                 }
             }
 

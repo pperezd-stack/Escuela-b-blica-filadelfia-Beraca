@@ -31,7 +31,7 @@ export default function ListaEstudiantes() {
   const [errorCarga, setErrorCarga] = useState(null);
 
   /* ==========================
-     MÓDULO DEL PROFESOR (DETECCIÓN ROBUSTA & LIMPIEZA)
+     MÓDULO DEL PROFESOR (DETECCIÓN ROBUSTA & LIMPIEZA TOTAL)
   ========================== */
   const obtenerModuloProfesor = () => {
     const usuarioStored = localStorage.getItem("usuario") || localStorage.getItem("user");
@@ -45,14 +45,8 @@ export default function ListaEstudiantes() {
       }
     }
 
-    if (userObj && String(userObj.rol || localStorage.getItem("rol") || "").toUpperCase() === "PROFESOR") {
-      const idModulo = userObj.moduloId ?? userObj.modulo_id ?? userObj.idModulo;
-      if (idModulo) {
-        localStorage.setItem("moduloId", idModulo.toString());
-      }
-    }
-
-    let posibleId = 
+    // Extraer de cualquier fuente posible
+    let rawId = 
       localStorage.getItem("moduloId") || 
       localStorage.getItem("modulo_id") || 
       userObj?.moduloId || 
@@ -60,9 +54,15 @@ export default function ListaEstudiantes() {
       userObj?.idModulo || 
       userObj?.modulo?.id;
 
-    // Limpieza estricta: si viene algo como "10:1", extraemos solo la primera parte
-    if (posibleId && String(posibleId).includes(":")) {
-      posibleId = String(posibleId).split(":")[0];
+    // LIMPIEZA ESTRICTA GENERALIZADA: Si viene cualquier cosa con dos puntos (ej: "10:1"), cortamos y dejamos solo el número
+    let posibleId = null;
+    if (rawId !== null && rawId !== undefined && rawId !== "") {
+      const stringId = String(rawId);
+      posibleId = stringId.includes(":") ? stringId.split(":")[0].trim() : stringId.trim();
+    }
+
+    if (posibleId && String(userObj?.rol || localStorage.getItem("rol") || "").toUpperCase() === "PROFESOR") {
+      localStorage.setItem("moduloId", posibleId);
     }
 
     const posibleNombre = 
@@ -164,7 +164,6 @@ export default function ListaEstudiantes() {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      // Cargamos catálogos generales (módulos, calificaciones, matrículas, etc.)
       const [
         resCal,
         resObs,
@@ -198,7 +197,7 @@ export default function ListaEstudiantes() {
     }
   };
 
-  // Función específica para traer únicamente los estudiantes del módulo actual del profesor (usando ?modulo=)
+  // Función específica para traer únicamente los estudiantes del módulo actual del profesor
   const fetchEstudiantesPorModulo = async (idModulo) => {
     try {
       const token = localStorage.getItem("token");
@@ -207,7 +206,10 @@ export default function ListaEstudiantes() {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?modulo=${idModulo}`, { headers });
+      // Limpieza preventiva adicional antes de armar la URL
+      const idLimpio = String(idModulo).split(":")[0].trim();
+
+      const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?modulo=${idLimpio}`, { headers });
       const dataUsers = await parseResponseSafe(resUsers);
 
       if (resUsers.ok && Array.isArray(dataUsers)) {

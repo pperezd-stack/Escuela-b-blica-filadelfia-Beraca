@@ -31,14 +31,21 @@ export default function ListaEstudiantes() {
   const [errorCarga, setErrorCarga] = useState(null);
 
   /* ==========================
-     MÓDULO DEL PROFESOR (LIMPIEZA RADICAL DE DOS PUNTOS)
+     LIMPIEZA RADICAL DE DOS PUNTOS (BLINDAJE TOTAL)
   ========================== */
+  const limpiarValorId = (val) => {
+    if (val === null || val === undefined) return "";
+    const str = String(val);
+    // Si contiene dos puntos, nos quedamos estrictamente con lo que está antes (ej: "10:1" -> "10")
+    return str.includes(":") ? str.split(":")[0].trim() : str.trim();
+  };
+
   const obtenerModuloProfesor = () => {
-    const keysToCheck = ["moduloId", "modulo_id", "modulo", "moduloNombre"];
-    keysToCheck.forEach(key => {
+    // Sanitizamos todas las llaves posibles en localStorage de inmediato
+    ["moduloId", "modulo_id", "modulo", "moduloNombre", "idModulo"].forEach(key => {
       const val = localStorage.getItem(key);
-      if (val && String(val).includes(":")) {
-        const limpio = String(val).split(":")[0].trim();
+      if (val) {
+        const limpio = limpiarValorId(val);
         localStorage.setItem(key, limpio);
       }
     });
@@ -49,9 +56,8 @@ export default function ListaEstudiantes() {
     if (usuarioStored) {
       try {
         userObj = JSON.parse(usuarioStored);
-        if (userObj.moduloId && String(userObj.moduloId).includes(":")) {
-          userObj.moduloId = String(userObj.moduloId).split(":")[0].trim();
-        }
+        if (userObj.moduloId) userObj.moduloId = limpiarValorId(userObj.moduloId);
+        if (userObj.modulo_id) userObj.modulo_id = limpiarValorId(userObj.modulo_id);
       } catch (e) {
         console.error("Error parseando usuario:", e);
       }
@@ -64,11 +70,7 @@ export default function ListaEstudiantes() {
       userObj?.modulo_id || 
       userObj?.idModulo;
 
-    let posibleId = null;
-    if (rawId !== null && rawId !== undefined && rawId !== "") {
-      const stringId = String(rawId);
-      posibleId = stringId.includes(":") ? stringId.split(":")[0].trim() : stringId.trim();
-    }
+    let posibleId = limpiarValorId(rawId);
 
     const posibleNombre = 
       localStorage.getItem("modulo") || 
@@ -82,15 +84,15 @@ export default function ListaEstudiantes() {
   const { posibleId, posibleNombre } = obtenerModuloProfesor();
 
   const moduloEncontrado = modulos.find((m) => {
-    if (posibleId && Number(m.id) === Number(posibleId)) return true;
+    if (posibleId && Number(limpiarValorId(m.id)) === Number(posibleId)) return true;
     if (posibleNombre && m.nombre?.trim().toLowerCase() === posibleNombre?.trim().toLowerCase()) return true;
     return false;
   });
 
   const moduloProfesorId = 
-    moduloEncontrado?.id || 
-    (posibleId && !isNaN(posibleId) ? parseInt(posibleId, 10) : null) || 
-    (modulos.length > 0 ? modulos[0].id : null);
+    limpiarValorId(moduloEncontrado?.id) || 
+    posibleId || 
+    (modulos.length > 0 ? limpiarValorId(modulos[0].id) : null);
 
   const moduloProfesorNombre = 
     moduloEncontrado?.nombre || 
@@ -202,13 +204,8 @@ export default function ListaEstudiantes() {
 
   const fetchEstudiantesPorModulo = async (idModulo) => {
     try {
-      let idLimpio = "";
-      if (idModulo !== null && idModulo !== undefined) {
-        const str = String(idModulo);
-        idLimpio = str.includes(":") ? str.split(":")[0].trim() : str.trim();
-      }
+      const idLimpio = limpiarValorId(idModulo);
 
-      // BLOQUEO ABSOLUTO: Si el ID está vacío, es nulo, o dice "undefined", cancelamos la petición
       if (!idLimpio || idLimpio === "undefined" || idLimpio === "null" || isNaN(idLimpio)) {
         return; 
       }
@@ -237,8 +234,9 @@ export default function ListaEstudiantes() {
   const getCalificacionEstudiante = (estudianteId) => {
     return calificaciones.find((c) => {
       const mismoEstudiante = Number(c.estudiante_id ?? c.estudianteId) === Number(estudianteId);
+      const modCalId = limpiarValorId(c.modulo_id ?? c.moduloId);
       const mismoModulo = 
-        (moduloProfesorId && Number(c.modulo_id ?? c.moduloId) === Number(moduloProfesorId)) ||
+        (moduloProfesorId && Number(modCalId) === Number(moduloProfesorId)) ||
         (moduloProfesorNombre && String(c.modulo || c.nombreModulo).toLowerCase() === moduloProfesorNombre.toLowerCase());
 
       return mismoEstudiante && mismoModulo;
@@ -264,10 +262,10 @@ export default function ListaEstudiantes() {
     );
 
     const idModuloAsignado = 
-      recordCal?.modulo_id || 
-      recordCal?.moduloId || 
-      matricula?.modulo_id || 
-      matricula?.moduloId || 
+      limpiarValorId(recordCal?.modulo_id) || 
+      limpiarValorId(recordCal?.moduloId) || 
+      limpiarValorId(matricula?.modulo_id) || 
+      limpiarValorId(matricula?.moduloId) || 
       moduloProfesorId || 
       (modulos[0]?.id ?? "");
 
@@ -318,7 +316,7 @@ export default function ListaEstudiantes() {
           body: JSON.stringify({
             id: matriculaSeleccionada.id,
             estudiante_id: selectedEstudiante.id,
-            modulo_id: parseInt(moduloSelect, 10),
+            modulo_id: parseInt(limpiarValorId(moduloSelect), 10),
           }),
         }
       );
@@ -369,7 +367,7 @@ export default function ListaEstudiantes() {
   const guardarHistorial = async () => {
     if (!selectedEstudiante) return alert("Selecciona un estudiante válido.");
 
-    const idModuloNum = parseInt(moduloSelect || moduloProfesorId || (modulos[0]?.id ?? 1), 10);
+    const idModuloNum = parseInt(limpiarValorId(moduloSelect || moduloProfesorId || (modulos[0]?.id ?? 1)), 10);
 
     if (isNaN(idModuloNum) || idModuloNum <= 0) {
       return alert("⚠️ Error: El módulo seleccionado no es válido o no ha cargado.");

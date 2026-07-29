@@ -197,26 +197,25 @@ export default function ListaEstudiantes() {
     }
   };
 
-  // Función específica para traer únicamente los estudiantes del módulo actual del profesor (Con limpieza agresiva)
+  // Función específica para traer únicamente los estudiantes del módulo actual del profesor (Con blindaje estricto)
   const fetchEstudiantesPorModulo = async (idModulo) => {
     try {
-      const token = localStorage.getItem("token");
-      const headers = {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
-
-      // LIMPIEZA TOTAL: Convertimos a texto y si trae dos puntos, extraemos solo la primera parte
       let idLimpio = "";
       if (idModulo !== null && idModulo !== undefined) {
         const str = String(idModulo);
         idLimpio = str.includes(":") ? str.split(":")[0].trim() : str.trim();
       }
 
-      // Si por alguna razón sigue vacío, intentamos usar un valor por defecto seguro
       if (!idLimpio || isNaN(idLimpio)) {
-        idLimpio = "1"; 
+        console.warn("ID de módulo inválido interceptado:", idModulo);
+        return; 
       }
+
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
 
       const resUsers = await fetch(`${API_URL}/usuarios/estudiantes-por-modulo?modulo=${idLimpio}`, { headers });
       const dataUsers = await parseResponseSafe(resUsers);

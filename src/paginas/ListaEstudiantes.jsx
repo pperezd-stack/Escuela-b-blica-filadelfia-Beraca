@@ -31,7 +31,7 @@ export default function ListaEstudiantes() {
   const [errorCarga, setErrorCarga] = useState(null);
 
   /* ==========================
-     MÓDULO DEL PROFESOR (DETECCIÓN ROBUSTA)
+     MÓDULO DEL PROFESOR (DETECCIÓN ROBUSTA & LIMPIEZA)
   ========================== */
   const obtenerModuloProfesor = () => {
     const usuarioStored = localStorage.getItem("usuario") || localStorage.getItem("user");
@@ -52,13 +52,18 @@ export default function ListaEstudiantes() {
       }
     }
 
-    const posibleId = 
+    let posibleId = 
       localStorage.getItem("moduloId") || 
       localStorage.getItem("modulo_id") || 
       userObj?.moduloId || 
       userObj?.modulo_id || 
       userObj?.idModulo || 
       userObj?.modulo?.id;
+
+    // Limpieza estricta: si viene algo como "10:1", extraemos solo la primera parte
+    if (posibleId && String(posibleId).includes(":")) {
+      posibleId = String(posibleId).split(":")[0];
+    }
 
     const posibleNombre = 
       localStorage.getItem("modulo") || 

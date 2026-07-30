@@ -28,7 +28,6 @@ export const crearUsuario = async (usuario) => {
    REGISTRAR PROFESOR (CON MÓDULO ASOCIADO)
 ========================================== */
 export const registrarProfesor = async (profesor) => {
-    // 🟢 Cambiado a /usuarios/crear-profesor
     const response = await API.post(
         "/usuarios/crear-profesor",
         profesor
@@ -37,11 +36,13 @@ export const registrarProfesor = async (profesor) => {
 };
 
 /* ==========================================
-   REGISTRAR ESTUDIANTE
+   REGISTRAR ESTUDIANTE (CON MÓDULO ASOCIADO)
 ========================================== */
 export const registrarEstudiante = async (estudiante) => {
+    // 🟢 Cambiado a /usuarios/crear-estudiante para que quede
+    // matriculado automáticamente en el módulo seleccionado
     const response = await API.post(
-        "/usuarios/crear",
+        "/usuarios/crear-estudiante",
         estudiante
     );
     return response.data;

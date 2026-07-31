@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import { registrarProfesor } from "../../services/usuarioService"; // O tu servicio equivalente para estudiantes
+import { registrarProfesor } from "../../services/usuarioService"; // O tu servicio equivalente
 
 export default function RegistroEstudiante({ volver }) {
     const navigate = useNavigate();
@@ -11,6 +12,10 @@ export default function RegistroEstudiante({ volver }) {
     const [nombre, setNombre] = useState("");
     const [password, setPassword] = useState("");
     const [confirmar, setConfirmar] = useState("");
+    const [moduloId, setModuloId] = useState("");
+
+    // Módulos cargados dinámicamente desde el backend
+    const [modulos, setModulos] = useState([]);
 
     const [loading, setLoading] = useState(false);
     const [mensaje, setMensaje] = useState("");
@@ -19,11 +24,23 @@ export default function RegistroEstudiante({ volver }) {
     const [mostrarPassword, setMostrarPassword] = useState(false);
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
+    // Cargar los módulos reales desde el backend al montar el componente
+    useEffect(() => {
+        axios.get("https://escuela-beraca-1.onrender.com/modulos")
+            .then((res) => setModulos(res.data))
+            .catch((err) => console.error("Error al cargar módulos:", err));
+    }, []);
+
     const registrar = async (e) => {
         e.preventDefault();
 
         setMensaje("");
         setError("");
+
+        if (!moduloId) {
+            setError("Debes seleccionar un módulo.");
+            return;
+        }
 
         if (password !== confirmar) {
             setError("Las contraseñas no coinciden.");
@@ -36,7 +53,8 @@ export default function RegistroEstudiante({ volver }) {
             const nuevoUsuario = {
                 nombre: nombre,
                 password: password,
-                rol: "ESTUDIANTE"
+                rol: "ESTUDIANTE",
+                moduloId: Number(moduloId)
             };
 
             const respuesta = await registrarProfesor(nuevoUsuario);
@@ -123,6 +141,26 @@ export default function RegistroEstudiante({ volver }) {
                             {mostrarConfirmacion ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
+                </div>
+
+                {/* 4. MÓDULO */}
+                <div className="login-field-group">
+                    <label>Módulo</label>
+                    <select
+                        value={moduloId}
+                        onChange={(e) => setModuloId(e.target.value)}
+                        className="login-input-select"
+                        required
+                    >
+                        <option value="">Seleccione un módulo</option>
+                        {modulos
+                            .filter((mod, index, self) => index === self.findIndex((m) => m.nombre === mod.nombre))
+                            .map((item) => (
+                                <option key={item.id} value={item.id}>
+                                    {item.nombre}
+                                </option>
+                            ))}
+                    </select>
                 </div>
 
                 {error && <div className="login-alert-error">{error}</div>}

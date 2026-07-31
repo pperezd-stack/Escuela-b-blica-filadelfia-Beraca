@@ -31,7 +31,7 @@ const EstudianteDashboard = (props) => {
           nombre: String(nombreReal)
         }));
 
-        // 1. Obtener nombre del módulo y del profesor (Ruta corregida a /modulos/{id})
+        // 1. Obtener nombre del módulo y del profesor
         if (moduloIdStored) {
           fetch(`${API_URL}/modulos/${moduloIdStored}`)
             .then(res => res.json())
@@ -71,7 +71,7 @@ const EstudianteDashboard = (props) => {
             })
             .catch(err => console.log("Error al cargar calificaciones", err));
 
-          // 3. Traer observaciones reales
+          // 3. Traer observaciones reales mapeando correctamente cada corte
           fetch(`${API_URL}/observaciones?rol=ESTUDIANTE`)
             .then(res => res.json())
             .then(obsList => {
@@ -82,10 +82,10 @@ const EstudianteDashboard = (props) => {
                   setDatosEstudiante(prev => ({
                     ...prev,
                     comentarios: {
-                      corte1: obsEstudiante.corte1 ?? obsEstudiante.observacion1 ?? "",
-                      corte2: obsEstudiante.observacion2 ?? obsEstudiante.observacion2 ?? "",
-                      corte3: obsEstudiante.observacion3 ?? obsEstudiante.observacion3 ?? "",
-                      final: obsEstudiante.final ?? obsEstudiante.observacionFinal ?? ""
+                      corte1: obsEstudiante.observacion1 || obsEstudiante.corte1 || "",
+                      corte2: obsEstudiante.observacion2 || obsEstudiante.corte2 || "",
+                      corte3: obsEstudiante.observacion3 || obsEstudiante.corte3 || "",
+                      final: obsEstudiante.observacionFinal || obsEstudiante.final || ""
                     }
                   }));
                 }
@@ -141,19 +141,8 @@ const EstudianteDashboard = (props) => {
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <LogoutButton 
-                className="btn-cerrar-sesion"
-                style={{
-                  backgroundColor: '#0d9488',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '8px 16px',
-                  fontWeight: '600',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer'
-                }}
-              />
+              {/* 🟢 Botón con clase de color restaurada */}
+              <LogoutButton className="btn-cerrar-sesion" />
             </div>
           </div>
 

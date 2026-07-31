@@ -112,7 +112,7 @@ body {
     }
 
     .card-body-area {
-        flex-direction: column-reverse; /* Cambia a 'column' si prefieres la imagen arriba y el login abajo */
+        flex-direction: column; /* Mantiene el formulario arriba y la imagen abajo en celulares */
         min-height: auto;
         border-radius: 12px;
     }

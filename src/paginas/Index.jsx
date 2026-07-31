@@ -12,7 +12,7 @@ export default function Index() {
 return (
 <> <Header />
 
-```
+
         <main className="main-card">
             <section className="card-body-area">
 

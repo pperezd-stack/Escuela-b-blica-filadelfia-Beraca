@@ -4,6 +4,9 @@ import LogoutButton from './LogoutButton';
 import "../../styles/pages/sistema/EstudianteDashboard.css";
 
 const EstudianteDashboard = (props) => {
+  // 🟢 URL real de tu backend en Render
+  const API_URL = "https://escuela-beraca-1.onrender.com";
+
   const [datosEstudiante, setDatosEstudiante] = useState({
     nombre: props.nombre || "Estudiante",
     modulo: props.modulo || "Cargando módulo...",
@@ -20,7 +23,6 @@ const EstudianteDashboard = (props) => {
       try {
         const usuario = JSON.parse(usuarioStored);
 
-        // Nombre del estudiante
         const nombreReal = typeof usuario.nombre === "object"
           ? (usuario.nombre?.nombre || usuario.nombre?.primerNombre || "Estudiante")
           : (usuario.nombre || props.nombre || "Estudiante");
@@ -30,9 +32,9 @@ const EstudianteDashboard = (props) => {
           nombre: String(nombreReal)
         }));
 
-        // 1. Petición para obtener el nombre del módulo y del profesor usando el moduloId guardado
+        // 1. Obtener nombre del módulo y del profesor
         if (moduloIdStored) {
-          fetch(`https://backend-plataforma-production-1234.up.railway.app/api/modulos/${moduloIdStored}`)
+          fetch(`${API_URL}/api/modulos/${moduloIdStored}`)
             .then(res => res.json())
             .then(modData => {
               if (modData) {
@@ -43,16 +45,13 @@ const EstudianteDashboard = (props) => {
                 }));
               }
             })
-            .catch(err => {
-              console.error("Error al cargar el módulo:", err);
-              setDatosEstudiante(prev => ({ ...prev, modulo: `Módulo #${moduloIdStored}` }));
-            });
+            .catch(err => console.error("Error al cargar el módulo:", err));
         }
 
         const estudianteId = usuario.id;
         if (estudianteId) {
-          // 2. Petición para traer las notas reales usando tu CalificacionController
-          fetch(`https://backend-plataforma-production-1234.up.railway.app/calificaciones?rol=ESTUDIANTE&estudianteId=${estudianteId}`)
+          // 2. Traer calificaciones reales
+          fetch(`${API_URL}/calificaciones?rol=ESTUDIANTE&estudianteId=${estudianteId}`)
             .then(res => res.json())
             .then(dataList => {
               if (Array.isArray(dataList) && dataList.length > 0) {
@@ -73,8 +72,8 @@ const EstudianteDashboard = (props) => {
             })
             .catch(err => console.log("Error al cargar calificaciones", err));
 
-          // 3. Petición para traer las observaciones usando tu ObservacionController
-          fetch(`https://backend-plataforma-production-1234.up.railway.app/observaciones?rol=ESTUDIANTE`)
+          // 3. Traer observaciones reales
+          fetch(`${API_URL}/observaciones?rol=ESTUDIANTE`)
             .then(res => res.json())
             .then(obsList => {
               if (Array.isArray(obsList) && obsList.length > 0) {
@@ -144,6 +143,7 @@ const EstudianteDashboard = (props) => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <LogoutButton 
+                className="btn-cerrar-sesion"
                 style={{
                   backgroundColor: '#0d9488',
                   color: '#ffffff',

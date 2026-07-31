@@ -71,27 +71,25 @@ const EstudianteDashboard = (props) => {
             })
             .catch(err => console.log("Error al cargar calificaciones", err));
 
-          // 3. Traer observaciones reales mapeando correctamente cada corte
-          fetch(`${API_URL}/observaciones?rol=ESTUDIANTE`)
-            .then(res => res.json())
-            .then(obsList => {
-              if (Array.isArray(obsList) && obsList.length > 0) {
-                const obsEstudiante = obsList.find(o => Number(o.estudiante_id) === Number(estudianteId) && Number(o.modulo_id) === Number(moduloIdStored)) || obsList[0];
-
-                if (obsEstudiante) {
+          // 3. Traer observaciones directas usando el nuevo endpoint del backend
+          if (moduloIdStored) {
+            fetch(`${API_URL}/observaciones/estudiante/${estudianteId}/modulo/${moduloIdStored}`)
+              .then(res => res.json())
+              .then(obs => {
+                if (obs && typeof obs === 'object') {
                   setDatosEstudiante(prev => ({
                     ...prev,
                     comentarios: {
-                      corte1: obsEstudiante.observacion1 || obsEstudiante.corte1 || "",
-                      corte2: obsEstudiante.observacion2 || obsEstudiante.corte2 || "",
-                      corte3: obsEstudiante.observacion3 || obsEstudiante.corte3 || "",
-                      final: obsEstudiante.observacionFinal || obsEstudiante.final || ""
+                      corte1: obs.observacion1 || obs.corte1 || "",
+                      corte2: obs.observacion2 || obs.corte2 || "",
+                      corte3: obs.observacion3 || obs.corte3 || "",
+                      final: obs.observacionFinal || obs.final || ""
                     }
                   }));
                 }
-              }
-            })
-            .catch(err => console.log("Error al cargar observaciones", err));
+              })
+              .catch(err => console.log("Error al cargar observaciones", err));
+          }
         }
 
       } catch (error) {
@@ -141,8 +139,19 @@ const EstudianteDashboard = (props) => {
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {/* 🟢 Botón con clase de color restaurada */}
-              <LogoutButton className="btn-cerrar-sesion" />
+              {/* 🟢 Botón con color forzado mediante style para asegurar que se pinte */}
+              <LogoutButton 
+                style={{
+                  backgroundColor: '#0d9488',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer'
+                }}
+              />
             </div>
           </div>
 

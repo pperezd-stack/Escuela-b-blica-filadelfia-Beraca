@@ -1,21 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-import { registrarProfesor } from "../../services/usuarioService";
+import { registrarProfesor } from "../../services/usuarioService"; // O tu servicio equivalente para estudiantes
 
-export default function RegistroProfesor({ volver }) {
+export default function RegistroEstudiante({ volver }) {
     const navigate = useNavigate();
 
     // Estados del formulario
     const [nombre, setNombre] = useState("");
     const [password, setPassword] = useState("");
     const [confirmar, setConfirmar] = useState("");
-    const [moduloId, setModuloId] = useState(""); 
-
-    // Módulos cargados dinámicamente desde el backend
-    const [modulos, setModulos] = useState([]);
 
     const [loading, setLoading] = useState(false);
     const [mensaje, setMensaje] = useState("");
@@ -24,23 +19,11 @@ export default function RegistroProfesor({ volver }) {
     const [mostrarPassword, setMostrarPassword] = useState(false);
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-    // Cargar los módulos reales desde el backend al montar el componente
-    useEffect(() => {
-        axios.get("https://escuela-beraca-1.onrender.com/modulos")
-            .then((res) => setModulos(res.data))
-            .catch((err) => console.error("Error al cargar módulos:", err));
-    }, []);
-
     const registrar = async (e) => {
         e.preventDefault();
 
         setMensaje("");
         setError("");
-
-        if (!moduloId) {
-            setError("Debes seleccionar un módulo asignado.");
-            return;
-        }
 
         if (password !== confirmar) {
             setError("Las contraseñas no coinciden.");
@@ -53,16 +36,15 @@ export default function RegistroProfesor({ volver }) {
             const nuevoUsuario = {
                 nombre: nombre,
                 password: password,
-                rol: "PROFESOR",
-                moduloId: Number(moduloId)
+                rol: "ESTUDIANTE"
             };
 
             const respuesta = await registrarProfesor(nuevoUsuario);
 
             localStorage.setItem("usuario", JSON.stringify(respuesta));
-            localStorage.setItem("rol", "PROFESOR");
+            localStorage.setItem("rol", "ESTUDIANTE");
 
-            setMensaje("Profesor registrado correctamente. Redirigiendo...");
+            setMensaje("Estudiante registrado correctamente. Redirigiendo...");
 
             setTimeout(() => {
                 navigate("/sistema");
@@ -70,9 +52,9 @@ export default function RegistroProfesor({ volver }) {
 
         } catch (err) {
             if (err.response && err.response.data) {
-                setError(err.response.data);
+                setError(typeof err.response.data === 'string' ? err.response.data : "No fue posible registrar el estudiante.");
             } else {
-                setError("No fue posible registrar el profesor.");
+                setError("No fue posible registrar el estudiante.");
             }
         } finally {
             setLoading(false);
@@ -82,9 +64,9 @@ export default function RegistroProfesor({ volver }) {
     return (
         <>
             <div className="login-form-heading">
-                <span>Registro Docente</span>
+                <span>Registro Estudiantil</span>
                 <h2>
-                    Crear cuenta <strong>Profesor</strong>
+                    Crear cuenta <strong>Estudiante</strong>
                 </h2>
             </div>
 
@@ -143,26 +125,6 @@ export default function RegistroProfesor({ volver }) {
                     </div>
                 </div>
 
-                {/* 4. MÓDULO ASIGNADO */}
-                <div className="login-field-group">
-                    <label>Módulo Asignado</label>
-                    <select
-                        value={moduloId}
-                        onChange={(e) => setModuloId(e.target.value)}
-                        className="login-input-select"
-                        required
-                    >
-                        <option value="">Seleccione un módulo</option>
-                        {modulos
-                            .filter((mod, index, self) => index === self.findIndex((m) => m.nombre === mod.nombre))
-                            .map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.nombre}
-                                </option>
-                            ))}
-                    </select>
-                </div>
-
                 {error && <div className="login-alert-error">{error}</div>}
                 {mensaje && <div className="login-alert-success">{mensaje}</div>}
 
@@ -171,7 +133,7 @@ export default function RegistroProfesor({ volver }) {
                     className="login-submit-button"
                     disabled={loading}
                 >
-                    {loading ? "Registrando..." : "Registrar Profesor"}
+                    {loading ? "Registrando..." : "Registrar Estudiante"}
                 </button>
             </form>
 

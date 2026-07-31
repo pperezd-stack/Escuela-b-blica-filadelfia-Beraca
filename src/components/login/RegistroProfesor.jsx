@@ -70,7 +70,7 @@ export default function RegistroProfesor({ volver }) {
 
         } catch (err) {
             if (err.response && err.response.data) {
-                setError(err.response.data);
+                setError(typeof err.response.data === 'string' ? err.response.data : "No fue posible registrar el profesor.");
             } else {
                 setError("No fue posible registrar el profesor.");
             }

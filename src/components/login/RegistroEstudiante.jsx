@@ -3,7 +3,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import { registrarProfesor } from "../../services/usuarioService"; // O tu servicio equivalente
+// Importación correcta del servicio de estudiantes
+import { registrarEstudiante } from "../../services/usuarioService";
 
 export default function RegistroEstudiante({ volver }) {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function RegistroEstudiante({ volver }) {
         setError("");
 
         if (!moduloId) {
-            setError("Debes seleccionar un módulo.");
+            setError("Debe seleccionar un módulo para el estudiante.");
             return;
         }
 
@@ -50,14 +51,14 @@ export default function RegistroEstudiante({ volver }) {
         try {
             setLoading(true);
 
-            const nuevoUsuario = {
+            // Estructura que espera guardarEstudianteConModulo en el backend
+            const nuevoEstudiante = {
                 nombre: nombre,
                 password: password,
-                rol: "ESTUDIANTE",
                 moduloId: Number(moduloId)
             };
 
-            const respuesta = await registrarProfesor(nuevoUsuario);
+            const respuesta = await registrarEstudiante(nuevoEstudiante);
 
             localStorage.setItem("usuario", JSON.stringify(respuesta));
             localStorage.setItem("rol", "ESTUDIANTE");
@@ -143,7 +144,7 @@ export default function RegistroEstudiante({ volver }) {
                     </div>
                 </div>
 
-                {/* 4. MÓDULO */}
+                {/* 4. MÓDULO ASOCIADO */}
                 <div className="login-field-group">
                     <label>Módulo</label>
                     <select

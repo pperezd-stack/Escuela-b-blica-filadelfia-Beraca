@@ -39,12 +39,18 @@ export const registrarProfesor = async (profesor) => {
    REGISTRAR ESTUDIANTE (CON MÓDULO ASOCIADO)
 ========================================== */
 export const registrarEstudiante = async (estudiante) => {
-    // 🟢 Cambiado a /usuarios/crear-estudiante para que quede
-    // matriculado automáticamente en el módulo seleccionado
     const response = await API.post(
         "/usuarios/crear-estudiante",
         estudiante
     );
+    return response.data;
+};
+
+/* ==========================================
+   OBTENER ESTUDIANTES POR MÓDULO
+========================================== */
+export const obtenerEstudiantesPorModulo = async (moduloId) => {
+    const response = await API.get(`/usuarios/estudiantes-por-modulo?modulo=${moduloId}`);
     return response.data;
 };
 

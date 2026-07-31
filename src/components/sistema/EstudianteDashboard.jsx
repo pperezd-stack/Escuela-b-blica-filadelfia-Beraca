@@ -139,18 +139,7 @@ const EstudianteDashboard = (props) => {
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <LogoutButton 
-                style={{
-                  backgroundColor: '#0d9488',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '8px 16px',
-                  fontWeight: '600',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  cursor: 'pointer'
-                }}
-              />
+              <LogoutButton className="btn-cerrar-sesion" />
             </div>
           </div>
 

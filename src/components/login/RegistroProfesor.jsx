@@ -12,9 +12,9 @@ export default function RegistroProfesor({ volver }) {
     const [nombre, setNombre] = useState("");
     const [password, setPassword] = useState("");
     const [confirmar, setConfirmar] = useState("");
-    const [moduloId, setModuloId] = useState(""); // 🟢 Ahora manejamos el ID
+    const [moduloId, setModuloId] = useState(""); 
 
-    // 🟢 Módulos cargados dinámicamente desde el backend
+    // Módulos cargados dinámicamente desde el backend
     const [modulos, setModulos] = useState([]);
 
     const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function RegistroProfesor({ volver }) {
     const [mostrarPassword, setMostrarPassword] = useState(false);
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-    // 🟢 Cargar los módulos reales desde el backend al montar el componente
+    // Cargar los módulos reales desde el backend al montar el componente
     useEffect(() => {
         axios.get("https://escuela-beraca-1.onrender.com/modulos")
             .then((res) => setModulos(res.data))
@@ -50,17 +50,15 @@ export default function RegistroProfesor({ volver }) {
         try {
             setLoading(true);
 
-            // 🟢 Mapeamos exactamente lo que espera ProfesorRegistroDTO en Spring Boot
             const nuevoUsuario = {
                 nombre: nombre,
                 password: password,
                 rol: "PROFESOR",
-                moduloId: Number(moduloId) // ⚠️ Debe ser un valor numérico
+                moduloId: Number(moduloId)
             };
 
             const respuesta = await registrarProfesor(nuevoUsuario);
 
-            // Guardamos localmente para la persistencia de sesión
             localStorage.setItem("usuario", JSON.stringify(respuesta));
             localStorage.setItem("rol", "PROFESOR");
 
@@ -71,8 +69,6 @@ export default function RegistroProfesor({ volver }) {
             }, 1000);
 
         } catch (err) {
-            // 🟢 Muestra el mensaje de error personalizado devuelto por el Backend 
-            // (ej: "El módulo X ya tiene un profesor asignado.")
             if (err.response && err.response.data) {
                 setError(err.response.data);
             } else {
@@ -157,11 +153,13 @@ export default function RegistroProfesor({ volver }) {
                         required
                     >
                         <option value="">Seleccione un módulo</option>
-                        {modulos.map((item) => (
-                            <option key={item.id} value={item.id}>
-                                {item.nombre}
-                            </option>
-                        ))}
+                        {modulos
+                            .filter((mod, index, self) => index === self.findIndex((m) => m.nombre === mod.nombre))
+                            .map((item) => (
+                                <option key={item.id} value={item.id}>
+                                    {item.nombre}
+                                </option>
+                            ))}
                     </select>
                 </div>
 

@@ -36,47 +36,37 @@ export default function ListaEstudiantes() {
   const limpiarValorId = (val) => {
     if (val === null || val === undefined) return "";
     const str = String(val);
-    // Si contiene dos puntos, nos quedamos estrictamente con lo que está antes (ej: "10:1" -> "10")
     return str.includes(":") ? str.split(":")[0].trim() : str.trim();
   };
 
   const obtenerModuloProfesor = () => {
-    // Sanitizamos todas las llaves posibles en localStorage de inmediato
-    ["moduloId", "modulo_id", "modulo", "moduloNombre", "idModulo"].forEach(key => {
-      const val = localStorage.getItem(key);
-      if (val) {
-        const limpio = limpiarValorId(val);
-        localStorage.setItem(key, limpio);
-      }
-    });
-
     const usuarioStored = localStorage.getItem("usuario") || localStorage.getItem("user");
     let userObj = null;
 
     if (usuarioStored) {
       try {
         userObj = JSON.parse(usuarioStored);
-        if (userObj.moduloId) userObj.moduloId = limpiarValorId(userObj.moduloId);
-        if (userObj.modulo_id) userObj.modulo_id = limpiarValorId(userObj.modulo_id);
       } catch (e) {
         console.error("Error parseando usuario:", e);
       }
     }
 
+    // Buscamos de forma directa el ID del módulo asociado al objeto usuario en sesión
     let rawId = 
-      localStorage.getItem("moduloId") || 
-      localStorage.getItem("modulo_id") || 
       userObj?.moduloId || 
       userObj?.modulo_id || 
-      userObj?.idModulo;
+      userObj?.modulo?.id ||
+      localStorage.getItem("moduloId") || 
+      localStorage.getItem("modulo_id");
 
     let posibleId = limpiarValorId(rawId);
 
     const posibleNombre = 
-      localStorage.getItem("modulo") || 
-      localStorage.getItem("moduloNombre") || 
       userObj?.moduloNombre ||
-      userObj?.nombreModulo;
+      userObj?.nombreModulo ||
+      userObj?.modulo?.nombre ||
+      localStorage.getItem("modulo") || 
+      localStorage.getItem("moduloNombre");
 
     return { posibleId, posibleNombre };
   };
@@ -89,19 +79,20 @@ export default function ListaEstudiantes() {
     return false;
   });
 
+  // Evitamos el fallback a modulos[0] si no coincide con el profesor para que no salte al primer módulo por orden
   const moduloProfesorId = 
     limpiarValorId(moduloEncontrado?.id) || 
     posibleId || 
-    (modulos.length > 0 ? limpiarValorId(modulos[0].id) : null);
+    null;
 
   const moduloProfesorNombre = 
     moduloEncontrado?.nombre || 
     posibleNombre || 
-    (modulos.length > 0 ? modulos[0].nombre : "");
+    "";
 
   const moduloProfesorLabel = moduloProfesorNombre 
     ? moduloProfesorNombre 
-    : (moduloProfesorId ? `Módulo #${moduloProfesorId}` : "Seleccione un Módulo");
+    : (moduloProfesorId ? `Módulo #${moduloProfesorId}` : "Cargando módulo...");
 
   /* ==========================
         MODAL & FORMULARIO

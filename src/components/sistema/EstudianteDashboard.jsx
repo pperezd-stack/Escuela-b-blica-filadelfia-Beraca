@@ -6,8 +6,8 @@ import "../../styles/pages/sistema/EstudianteDashboard.css";
 const EstudianteDashboard = (props) => {
   const [datosEstudiante, setDatosEstudiante] = useState({
     nombre: props.nombre || "Estudiante",
-    modulo: props.modulo || "MÓDULO DE APRENDIZAJE",
-    profesor: props.profesor || "Docente Asignado",
+    modulo: props.modulo || "Cargando módulo...",
+    profesor: props.profesor || "Cargando docente...",
     notas: props.notas || { corte1: 0, corte2: 0, corte3: 0, final: 0 },
     comentarios: props.comentarios || { corte1: "", corte2: "", corte3: "", final: "" }
   });
@@ -20,53 +20,80 @@ const EstudianteDashboard = (props) => {
       try {
         const usuario = JSON.parse(usuarioStored);
 
-        // Formatear nombre de forma segura
+        // Nombre del estudiante
         const nombreReal = typeof usuario.nombre === "object"
           ? (usuario.nombre?.nombre || usuario.nombre?.primerNombre || "Estudiante")
           : (usuario.nombre || props.nombre || "Estudiante");
 
-        // Detección robusta de Módulo y Profesor
-        const moduloObj = usuario.modulo || usuario.matricula?.modulo;
-        let nombreModulo = 
-          typeof moduloObj === "string" ? moduloObj : 
-          (moduloObj?.nombre || usuario.nombreModulo || usuario.moduloNombre || props.modulo);
+        setDatosEstudiante(prev => ({
+          ...prev,
+          nombre: String(nombreReal)
+        }));
 
-        let nombreProfesor = 
-          typeof moduloObj?.profesor === "string" ? moduloObj.profesor : 
-          (moduloObj?.profesor?.nombre || usuario.profesor || usuario.docente || props.profesor);
-
-        setDatosEstudiante({
-          nombre: String(nombreReal),
-          modulo: nombreModulo || `MÓDULO #${moduloIdStored || ''}`,
-          profesor: nombreProfesor || "Docente Asignado",
-          notas: {
-            corte1: usuario.corte1 ?? props.notas?.corte1 ?? 0,
-            corte2: usuario.corte2 ?? props.notas?.corte2 ?? 0,
-            corte3: usuario.corte3 ?? props.notas?.corte3 ?? 0,
-            final: usuario.final ?? usuario.notaFinal ?? props.notas?.final ?? 0,
-          },
-          comentarios: {
-            corte1: usuario.comentario1 ?? usuario.comentarios?.corte1 ?? props.comentarios?.corte1 ?? "",
-            corte2: usuario.comentario2 ?? usuario.comentarios?.corte2 ?? props.comentarios?.corte2 ?? "",
-            corte3: usuario.comentario3 ?? usuario.comentarios?.corte3 ?? props.comentarios?.corte3 ?? "",
-            final: usuario.comentarioFinal ?? usuario.comentario_final ?? usuario.comentarios?.final ?? props.comentarios?.final ?? ""
-          }
-        });
-
-        // Opcional por si tienes un endpoint para traer el nombre del módulo por su ID guardado en localStorage
-        if (moduloIdStored && (!nombreModulo || nombreModulo.includes("MÓDULO"))) {
-          fetch(`https://tu-backend.onrender.com/api/modulos/${moduloIdStored}`)
+        // 1. Petición para obtener el nombre del módulo y del profesor usando el moduloId guardado
+        if (moduloIdStored) {
+          fetch(`https://backend-plataforma-production-1234.up.railway.app/api/modulos/${moduloIdStored}`)
             .then(res => res.json())
             .then(modData => {
               if (modData) {
                 setDatosEstudiante(prev => ({
                   ...prev,
-                  modulo: modData.nombre || modData.titulo || prev.modulo,
-                  profesor: modData.profesor?.nombre || modData.nombreProfesor || prev.profesor
+                  modulo: modData.nombre || modData.titulo || "Módulo Académico",
+                  profesor: modData.profesor?.nombre || modData.nombreProfesor || "Docente Asignado"
                 }));
               }
             })
-            .catch(err => console.log("No se pudo cargar el detalle extra del módulo", err));
+            .catch(err => {
+              console.error("Error al cargar el módulo:", err);
+              setDatosEstudiante(prev => ({ ...prev, modulo: `Módulo #${moduloIdStored}` }));
+            });
+        }
+
+        const estudianteId = usuario.id;
+        if (estudianteId) {
+          // 2. Petición para traer las notas reales usando tu CalificacionController
+          fetch(`https://backend-plataforma-production-1234.up.railway.app/calificaciones?rol=ESTUDIANTE&estudianteId=${estudianteId}`)
+            .then(res => res.json())
+            .then(dataList => {
+              if (Array.isArray(dataList) && dataList.length > 0) {
+                const cal = dataList.find(c => Number(c.modulo_id) === Number(moduloIdStored)) || dataList[0];
+                
+                if (cal) {
+                  setDatosEstudiante(prev => ({
+                    ...prev,
+                    notas: {
+                      corte1: cal.corte1 ?? 0,
+                      corte2: cal.corte2 ?? 0,
+                      corte3: cal.corte3 ?? 0,
+                      final: cal.final ?? cal.notaFinal ?? 0,
+                    }
+                  }));
+                }
+              }
+            })
+            .catch(err => console.log("Error al cargar calificaciones", err));
+
+          // 3. Petición para traer las observaciones usando tu ObservacionController
+          fetch(`https://backend-plataforma-production-1234.up.railway.app/observaciones?rol=ESTUDIANTE`)
+            .then(res => res.json())
+            .then(obsList => {
+              if (Array.isArray(obsList) && obsList.length > 0) {
+                const obsEstudiante = obsList.find(o => Number(o.estudiante_id) === Number(estudianteId) && Number(o.modulo_id) === Number(moduloIdStored)) || obsList[0];
+
+                if (obsEstudiante) {
+                  setDatosEstudiante(prev => ({
+                    ...prev,
+                    comentarios: {
+                      corte1: obsEstudiante.corte1 ?? obsEstudiante.observacion1 ?? "",
+                      corte2: obsEstudiante.corte2 ?? obsEstudiante.observacion2 ?? "",
+                      corte3: obsEstudiante.corte3 ?? obsEstudiante.observacion3 ?? "",
+                      final: obsEstudiante.final ?? obsEstudiante.observacionFinal ?? ""
+                    }
+                  }));
+                }
+              }
+            })
+            .catch(err => console.log("Error al cargar observaciones", err));
         }
 
       } catch (error) {

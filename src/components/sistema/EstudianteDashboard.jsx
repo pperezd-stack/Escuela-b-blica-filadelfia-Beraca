@@ -71,7 +71,7 @@ const EstudianteDashboard = (props) => {
             })
             .catch(err => console.log("Error al cargar calificaciones", err));
 
-          // 3. Traer observaciones directas usando el nuevo endpoint del backend
+          // 3. Traer observaciones directas mapeando los campos exactos del backend
           if (moduloIdStored) {
             fetch(`${API_URL}/observaciones/estudiante/${estudianteId}/modulo/${moduloIdStored}`)
               .then(res => res.json())
@@ -80,10 +80,10 @@ const EstudianteDashboard = (props) => {
                   setDatosEstudiante(prev => ({
                     ...prev,
                     comentarios: {
-                      corte1: obs.observacion1 || obs.corte1 || "",
-                      corte2: obs.observacion2 || obs.corte2 || "",
-                      corte3: obs.observacion3 || obs.corte3 || "",
-                      final: obs.observacionFinal || obs.final || ""
+                      corte1: obs.comentarioCorte1 || "",
+                      corte2: obs.comentarioCorte2 || "",
+                      corte3: obs.comentarioCorte3 || "",
+                      final: obs.comentarioFinal || ""
                     }
                   }));
                 }
@@ -139,7 +139,6 @@ const EstudianteDashboard = (props) => {
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              {/* 🟢 Botón con color forzado mediante style para asegurar que se pinte */}
               <LogoutButton 
                 style={{
                   backgroundColor: '#0d9488',

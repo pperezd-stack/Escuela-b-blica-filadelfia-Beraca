@@ -4,7 +4,6 @@ import LogoutButton from './LogoutButton';
 import "../../styles/pages/sistema/EstudianteDashboard.css";
 
 const EstudianteDashboard = (props) => {
-  // 🟢 URL real de tu backend en Render
   const API_URL = "https://escuela-beraca-1.onrender.com";
 
   const [datosEstudiante, setDatosEstudiante] = useState({
@@ -32,12 +31,12 @@ const EstudianteDashboard = (props) => {
           nombre: String(nombreReal)
         }));
 
-        // 1. Obtener nombre del módulo y del profesor
+        // 1. Obtener nombre del módulo y del profesor (Ruta corregida a /modulos/{id})
         if (moduloIdStored) {
-          fetch(`${API_URL}/api/modulos/${moduloIdStored}`)
+          fetch(`${API_URL}/modulos/${moduloIdStored}`)
             .then(res => res.json())
             .then(modData => {
-              if (modData) {
+              if (modData && modData.nombre) {
                 setDatosEstudiante(prev => ({
                   ...prev,
                   modulo: modData.nombre || modData.titulo || "Módulo Académico",
@@ -84,8 +83,8 @@ const EstudianteDashboard = (props) => {
                     ...prev,
                     comentarios: {
                       corte1: obsEstudiante.corte1 ?? obsEstudiante.observacion1 ?? "",
-                      corte2: obsEstudiante.corte2 ?? obsEstudiante.observacion2 ?? "",
-                      corte3: obsEstudiante.corte3 ?? obsEstudiante.observacion3 ?? "",
+                      corte2: obsEstudiante.observacion2 ?? obsEstudiante.observacion2 ?? "",
+                      corte3: obsEstudiante.observacion3 ?? obsEstudiante.observacion3 ?? "",
                       final: obsEstudiante.final ?? obsEstudiante.observacionFinal ?? ""
                     }
                   }));

@@ -14,6 +14,7 @@ const EstudianteDashboard = (props) => {
 
   useEffect(() => {
     const usuarioStored = localStorage.getItem("usuario");
+    const moduloIdStored = localStorage.getItem("moduloId");
 
     if (usuarioStored) {
       try {
@@ -24,21 +25,20 @@ const EstudianteDashboard = (props) => {
           ? (usuario.nombre?.nombre || usuario.nombre?.primerNombre || "Estudiante")
           : (usuario.nombre || props.nombre || "Estudiante");
 
-        // Detección robusta de Módulo y Profesor (soporta objetos anidados o strings)
+        // Detección robusta de Módulo y Profesor
         const moduloObj = usuario.modulo || usuario.matricula?.modulo;
-        const nombreModulo = 
+        let nombreModulo = 
           typeof moduloObj === "string" ? moduloObj : 
-          (moduloObj?.nombre || usuario.nombreModulo || usuario.moduloNombre || props.modulo || "MÓDULO DE APRENDIZAJE");
+          (moduloObj?.nombre || usuario.nombreModulo || usuario.moduloNombre || props.modulo);
 
-        const profesorObj = moduloObj?.profesor || usuario.profesor || usuario.docente;
-        const nombreProfesor = 
-          typeof profesorObj === "string" ? profesorObj : 
-          (profesorObj?.nombre || usuario.nombreProfesor || props.profesor || "Docente Asignado");
+        let nombreProfesor = 
+          typeof moduloObj?.profesor === "string" ? moduloObj.profesor : 
+          (moduloObj?.profesor?.nombre || usuario.profesor || usuario.docente || props.profesor);
 
         setDatosEstudiante({
           nombre: String(nombreReal),
-          modulo: nombreModulo,
-          profesor: nombreProfesor,
+          modulo: nombreModulo || `MÓDULO #${moduloIdStored || ''}`,
+          profesor: nombreProfesor || "Docente Asignado",
           notas: {
             corte1: usuario.corte1 ?? props.notas?.corte1 ?? 0,
             corte2: usuario.corte2 ?? props.notas?.corte2 ?? 0,
@@ -52,6 +52,23 @@ const EstudianteDashboard = (props) => {
             final: usuario.comentarioFinal ?? usuario.comentario_final ?? usuario.comentarios?.final ?? props.comentarios?.final ?? ""
           }
         });
+
+        // Opcional por si tienes un endpoint para traer el nombre del módulo por su ID guardado en localStorage
+        if (moduloIdStored && (!nombreModulo || nombreModulo.includes("MÓDULO"))) {
+          fetch(`https://tu-backend.onrender.com/api/modulos/${moduloIdStored}`)
+            .then(res => res.json())
+            .then(modData => {
+              if (modData) {
+                setDatosEstudiante(prev => ({
+                  ...prev,
+                  modulo: modData.nombre || modData.titulo || prev.modulo,
+                  profesor: modData.profesor?.nombre || modData.nombreProfesor || prev.profesor
+                }));
+              }
+            })
+            .catch(err => console.log("No se pudo cargar el detalle extra del módulo", err));
+        }
+
       } catch (error) {
         console.error("Error al leer los datos del estudiante:", error);
       }
@@ -98,7 +115,6 @@ const EstudianteDashboard = (props) => {
               <h3 className="u-fullname">{nombre}</h3>
               <span className="u-badge">Acceso Estudiantil</span>
             </div>
-            {/* BOTÓN DE CERRAR SESIÓN CON COLOR Y ESTILO MEJORADO */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <LogoutButton 
                 style={{

@@ -181,6 +181,8 @@ export default function RegistroEstudiante({ volver }) {
                 <button
                     type="button"
                     className="login-link-button"
+
+                    
                     onClick={volver}
                 >
                     Inicia sesión
@@ -189,3 +191,4 @@ export default function RegistroEstudiante({ volver }) {
         </>
     );
 }
+
